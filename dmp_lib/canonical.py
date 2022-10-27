@@ -67,8 +67,9 @@ class Canonical:
         ----------
         dt : float
             time step
-        dist : float
-            measured distance between commanded and real position
+        dist : float, optional
+            distance between commanded and real position (default is 0)
         """
         const = -self.alpha_phase / self.tau / (1 + self.alpha_stop * dist)
         self.s = self.s * np.exp(const * dt)
+        
