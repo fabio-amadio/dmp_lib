@@ -56,7 +56,7 @@ class Canonical:
         return self.s
 
 
-    def step(self, dt, dist=0):
+    def step(self, dt, dist = 0):
         """Step forward the canonical system
 
         Parameters
@@ -67,5 +67,5 @@ class Canonical:
             measured distance between commanded and real position
 
         """
-        const = -self.alpha_phase/self.tau/(1+self.alpha_stop*dist)
-        self.s = self.s*np.exp(const*dt)
+        const = -self.alpha_phase / self.tau / (1 + self.alpha_stop * dist)
+        self.s = self.s * np.exp(const * dt)
