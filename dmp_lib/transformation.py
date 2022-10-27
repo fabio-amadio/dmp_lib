@@ -7,6 +7,8 @@ class Transformation:
     The transformation system drives the DMP state 'x' towards a goal
     'g' following a mass-spring-damper dynamics perturbed by a 
     nonlinear forcing term.
+    The 'classic' formulation refers to the one in Schaal et al., 2006.
+    The 'advanced' formulation refers to the one in Pastor et al., 2009.
 
     Attributes
     ----------
