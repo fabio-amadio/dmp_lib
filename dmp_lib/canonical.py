@@ -2,18 +2,21 @@ import numpy as np
 
 class Canonical:
     """
-    A class used to implement the DMP canonical system
-
+    A class used to implement the DMP canonical system.
+    
+    The canonical system drives phase variable 's' from 1 to 0, 
+    dictating the time for the other systems composing a DMP.
 
     Attributes
     ----------
+    s : float
+        phase variable
     tau : float
         time scaling parameter
     alpha_phase : float
         phase decay parameter
     alpha_stop : float
         phase stop parameter
-
 
     Methods
     -------
@@ -24,6 +27,7 @@ class Canonical:
     step(dt, dist = 0)
         step forward the canonical system (of dt sec) 
     """
+
     def __init__(self, tau, alpha_phase, alpha_stop = 0):
         """
         Parameters
@@ -47,7 +51,7 @@ class Canonical:
 
 
     def get_phase(self):
-        """Get the value of the phase attribute.
+        """Get current phase variable value.
 
         Returns
         -------
@@ -57,7 +61,7 @@ class Canonical:
 
 
     def step(self, dt, dist = 0):
-        """Step forward the canonical system
+        """Step forward the canonical system.
 
         Parameters
         ----------
@@ -65,7 +69,6 @@ class Canonical:
             time step
         dist : float
             measured distance between commanded and real position
-
         """
         const = -self.alpha_phase / self.tau / (1 + self.alpha_stop * dist)
         self.s = self.s * np.exp(const * dt)
