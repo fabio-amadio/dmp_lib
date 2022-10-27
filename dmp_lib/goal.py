@@ -47,7 +47,7 @@ class Goal:
         self.g = g0
 
 
-    def set_new_goal(self, new_g, force_goal=True):
+    def set_new_goal(self, new_g, force_goal = True):
         """Set new desired goal
 
         Parameters
@@ -86,5 +86,5 @@ class Goal:
         dt : float
             time step
         """
-        dg = self.alpha_g*(self.g0-self.g)/self.tau
-        self.g = self.g + dt*dg
+        dg = self.alpha_g * (self.g0 - self.g) / self.tau
+        self.g = self.g + dt * dg
