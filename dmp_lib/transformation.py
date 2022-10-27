@@ -123,5 +123,5 @@ class Transformation:
 
         dx = self.z / self.tau
         
-        self.x = self.x + dt*dx
-        self.z = self.z + dt*dz
+        self.x = self.x + dt * dx
+        self.z = self.z + dt * dz
