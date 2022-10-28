@@ -1,4 +1,4 @@
-"""Geometry module
+"""geometry
 
 This module contains a set of util functions for handling different 
 rotation representations:
@@ -109,7 +109,7 @@ def is_rotation_matrix(R):
     if ( np.abs(np.linalg.det(R) - 1) > epsilon or 
         np.sum(I - np.matmul(R, R.T)) > epsilon ):
         return False
-    else
+    else:
         return True
 
 def rot_to_quat(R):

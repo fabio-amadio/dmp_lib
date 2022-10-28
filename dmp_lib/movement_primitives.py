@@ -1,3 +1,12 @@
+"""movement_primitives module
+
+This module implements differen movement primitives classes:
+    *DMP
+    *Bimanual_DMP
+    *Target_DMP
+    *Bimanual_Target_DMP
+"""
+
 import numpy as np
 import numpy.matlib as matlib
 import matplotlib.pyplot as plt
@@ -718,7 +727,7 @@ class Bimanual_DMP(DMP):
         x = np.zeros((len(time_steps), self.sys_dim))
         v = np.zeros((len(time_steps), self.sys_dim))
         g = np.zeros((len(time_steps), self.sys_dim))
-        
+
         forcing = np.zeros((len(time_steps), self.sys_dim))
 
         p_r = np.zeros((len(time_steps), 3))
@@ -1199,13 +1208,13 @@ class Target_DMP(DMP):
             self.goal_sys.set_new_goal(new_g, force_goal = force_goal)
 
 
-    def get_goal(self, in_world_frame = True):
+    def get_goal(self, in_world_frame = False):
         """Set new desired goal.
 
         Parameters
         ----------
         in_world_frame : bool, optional
-            pose expressed in world frame (default is True)
+            pose expressed in world frame (default is False)
         """
         g_in_ref = DMP.get_goal(self)
 
@@ -1435,7 +1444,7 @@ class Bimanual_Target_DMP(Target_DMP):
         """
         time_steps = np.arange(0., self.tau, self.dt)
         
-        g0 = self.get_goal()
+        g0 = self.get_goal(in_world_frame = False)
         s = np.zeros((len(time_steps), 1))
         x = np.zeros((len(time_steps), self.sys_dim))
         v = np.zeros((len(time_steps), self.sys_dim))

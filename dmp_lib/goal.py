@@ -1,3 +1,8 @@
+"""goal module
+
+This module implements the Goal class.
+"""
+
 import numpy as np
 
 class Goal:

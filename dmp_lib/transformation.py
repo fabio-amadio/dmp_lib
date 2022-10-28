@@ -1,3 +1,8 @@
+"""transformation module
+
+This module implements the Transformation class.
+"""
+
 import numpy as np
 
 class Transformation:

@@ -1,3 +1,8 @@
+"""canonical module
+
+This module implements the Canonical class.
+"""
+
 import numpy as np
 
 class Canonical:
