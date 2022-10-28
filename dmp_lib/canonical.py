@@ -1,9 +1,9 @@
 import numpy as np
 
 class Canonical:
-    """
+    """Canonical system class.
+
     A class used to implement the DMP canonical system.
-    
     The canonical system drives phase variable 's' from 1 to 0, 
     dictating the time for the other systems composing a DMP.
 

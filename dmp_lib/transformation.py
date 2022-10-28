@@ -1,9 +1,9 @@
 import numpy as np
 
 class Transformation:
-    """
-    A class used to implement the DMP transformation system.
+    """Transformation system class.
 
+    A class used to implement the DMP transformation system.
     The transformation system drives the DMP state 'x' towards a goal
     'g' following a mass-spring-damper dynamics perturbed by a 
     nonlinear forcing term.

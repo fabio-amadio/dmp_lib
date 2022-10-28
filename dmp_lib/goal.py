@@ -1,9 +1,9 @@
 import numpy as np
 
 class Goal:
-    """
-    A class used to implement the DMP goal system.
+    """Goal system class.
 
+    A class used to implement the DMP goal system.
     The goal system drives goal variable 'g' towards a desired 'g0'.
 
     Attributes
