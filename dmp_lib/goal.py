@@ -1,13 +1,7 @@
-"""goal module
-
-This module implements the Goal class.
-"""
-
 import numpy as np
 
 class Goal:
-    """Goal system class.
-
+    """
     A class used to implement the DMP goal system.
     The goal system drives goal variable 'g' towards a desired 'g0'.
 
@@ -21,15 +15,6 @@ class Goal:
         time scaling parameter
     alpha_g : float
         goal advancement parameter
-
-    Methods
-    -------
-    set_new_goal(new_g, force_goal = True)
-        reset phase to 1
-    get_goal()
-        get current goal value
-    step(dt)
-        single-step goal system update (of dt sec) 
     """
 
     def __init__(self, g0, tau, alpha_g):

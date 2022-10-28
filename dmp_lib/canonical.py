@@ -1,13 +1,7 @@
-"""canonical module
-
-This module implements the Canonical class.
-"""
-
 import numpy as np
 
 class Canonical:
-    """Canonical system class.
-
+    """
     A class used to implement the DMP canonical system.
     The canonical system drives phase variable 's' from 1 to 0, 
     dictating the time for the other systems composing a DMP.
@@ -22,15 +16,6 @@ class Canonical:
         phase decay parameter
     alpha_stop : float
         phase stop parameter
-
-    Methods
-    -------
-    reset()
-        reset phase to 1
-    get_phase()
-        get phase value
-    step(dt, dist = 0)
-        single-step canonical system update (of dt sec) 
     """
 
     def __init__(self, tau, alpha_phase, alpha_stop = 0):

@@ -1,5 +1,4 @@
-"""geometry
-
+"""
 This module contains a set of util functions for handling different 
 rotation representations:
 
@@ -435,7 +434,7 @@ def axis_angle_to_quat(axis_angle):
 
     Raises
     ------
-    list
+    ValueError
         If input list dimension is not 3
     """
     if len(axis_angle) != 3:

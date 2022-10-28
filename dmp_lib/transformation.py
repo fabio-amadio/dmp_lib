@@ -1,13 +1,7 @@
-"""transformation module
-
-This module implements the Transformation class.
-"""
-
 import numpy as np
 
 class Transformation:
-    """Transformation system class.
-
+    """
     A class used to implement the DMP transformation system.
     The transformation system drives the DMP state 'x' towards a goal
     'g' following a mass-spring-damper dynamics perturbed by a 
@@ -33,15 +27,6 @@ class Transformation:
         damping parameter
     style: string
         dynamics style ('advanced' or 'classic')
-
-    Methods
-    -------
-    reset(x0)
-        reset phase to 1
-    get_state()
-        get current goal value
-    step(dt, g, s, f = 0)
-        single-step transformation system update (of dt sec) 
     """
 
     def __init__(self, x0, tau, K, D = None, style = 'advanced'):

@@ -1,12 +1,3 @@
-"""movement_primitives module
-
-This module implements differen movement primitives classes:
-    *DMP
-    *Bimanual_DMP
-    *Target_DMP
-    *Bimanual_Target_DMP
-"""
-
 import numpy as np
 import numpy.matlib as matlib
 import matplotlib.pyplot as plt
@@ -26,8 +17,7 @@ from dmp_lib.geometry import is_rotation_matrix
 
 
 class DMP():
-    """Main DMP class.
-
+    """
     A class used to implement the DMP comprising of a canonical, goal 
     and transformation system working together.
 
@@ -68,56 +58,6 @@ class DMP():
 
     weights: numpy.ndarray
         basis function weights
-
-    Methods
-    -------
-    init_forcing(num_basis)
-        initialize parameters of the forcing term
-
-    evaluate_basis(s)
-        evaluate basis functions at phase s
-
-    evaluate_forcing(s)
-        evaluate forcing term at phase s
-
-    evaluate_weighted_basis(s)
-        evaluate weighted basis functions at phase s
-
-    reset(x0)
-        reset DMP at initial state x0
-
-    set_tau(new_tau)
-        set time scaling parameter
-
-    set_new_goal(new_g, force_goal=True)
-        set new desired goal
-
-    get_phase()
-        get current phase from canonical system
-
-    get_goal()
-        get current goal from goal system
-
-    get_output()
-        get DMP output from transformation system
-
-    step(dist=0)
-        single-step DMP update
-
-    learn_from_demo(x_demo, time_steps, filter_mode = 'cd')
-        fit forcing function to reproduce desired trajectory
-
-    get_weights()
-        get DMP weights
-
-    import_weights(new_weights)
-        import DMP weights
-
-    rollout()
-        run a DMP rollout and reset
-
-    info()
-        return info about DMP type
     """
 
     def __init__(self, num_basis, x0, g0, dt, tau,
@@ -530,8 +470,7 @@ class DMP():
 
 
 class Bimanual_DMP(DMP):
-    """Bimanual DMP subclass (extension of DMP).
-
+    """
     A class used to implement the Bimanual DMP that controls a virtual 
     frame placed between the two end-effectors. Each end-effector pose 
     is defined by a fixed rotation and variable translation from the 
@@ -580,17 +519,6 @@ class Bimanual_DMP(DMP):
 
     R_left : numpy.ndarray
         left EE rotation matrix [R_left.shape = (3,3)]
-
-    Methods
-    -------
-    rollout()
-        run a DMP rollout and reset
-
-    info()
-        return info about DMP type
-
-    get_poses()
-        get end-effector poses from virtual frame pose
     """
 
     def __init__(self, num_basis, x0, g0, dt, tau,
@@ -760,7 +688,6 @@ class Bimanual_DMP(DMP):
 
 class Target_DMP(DMP):
     """Target-Referred DMP subclass (extension of DMP).
-
     A class used to implement the Target-Referred DMP (TR-DMP) that
     learned demo trajectory w.r.t. a target reference frame that can
     be changed at execution time.
@@ -793,29 +720,6 @@ class Target_DMP(DMP):
         basis function weights
     w_H_t: numpy.ndarray
         world-to-target homogeneous transformation
-
-    Methods
-    -------
-    reset(x0, in_world_frame = True)
-        reset DMP at initial state x0 in a specific reference frame
-
-    learn_from_demo(x_demo, time_steps, filter_mode = 'cd')
-        fit forcing function to reproduce desired trajectory
-
-    rollout()
-        run a DMP rollout and reset
-
-    set_new_target_frame(w_H_t)
-        set new world-to-target transform
-
-    get_pose()
-        get end-effector pose expressed in the world-frame
-
-    set_new_goal(new_g, force_goal = True, in_world_frame = True)
-        set new desired goal in a specific reference frame
-
-    get_goal(in_world_frame = False)
-        get current goal from goal system in a specific reference frame
     """
 
     def __init__(self, num_basis, x0, g0, dt, tau,
@@ -1246,8 +1150,7 @@ class Target_DMP(DMP):
 
 
 class Bimanual_Target_DMP(Target_DMP):
-    """Bimanual Target-Referred DMP subclass (extension of Target_DMP).
-
+    """
     A class used to implement the Target-Referred (TR) Bimanual DMP
     that controls a virtual frame placed between the two end-effectors.
     Each end-effector pose is defined by a fixed rotation and variable 
@@ -1301,17 +1204,6 @@ class Bimanual_Target_DMP(Target_DMP):
 
     R_left : numpy.ndarray
         left EE rotation matrix [R_left.shape = (3,3)]
-
-    Methods
-    -------
-    rollout()
-        run a DMP rollout and reset
-
-    info()
-        return info about DMP type
-
-    get_poses()
-        get end-effector poses from virtual frame pose
     """
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2,
