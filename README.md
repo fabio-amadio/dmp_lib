@@ -11,8 +11,8 @@ pip install -e .
 
 ## Repository Contents ##
 
-The repository contains two folders: __dmp_lib__ and __tests__.
+The repository contains two folders: __dmp_lib__ and __example__.
 
-The __dmp_lib__ folder contains all the scripts implementing DMPs.
+The __dmp_lib__ folder contains all the modules implementing DMPs.
 
-The __test__ folder contains scripts to run example tests (run them from inside __test__).
+The __example__ folder contains example scripts (run them from inside __example__).
