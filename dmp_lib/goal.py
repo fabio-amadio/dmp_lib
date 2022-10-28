@@ -24,7 +24,7 @@ class Goal:
     get_goal()
         get current goal value
     step(dt)
-        step forward the canonical system (of dt sec) 
+        single-step goal system update (of dt sec) 
     """
 
     def __init__(self, g0, tau, alpha_g):
@@ -48,7 +48,7 @@ class Goal:
 
 
     def set_new_goal(self, new_g, force_goal = True):
-        """Set new desired goal
+        """Set new desired goal.
 
         Parameters
         ----------
@@ -73,13 +73,14 @@ class Goal:
 
         Returns
         -------
-            float: goal value
+        numpy.ndarray
+            goal value
         """
         return self.g
 
 
     def step(self, dt):
-        """Step forward the goal system
+        """Single-step goal system update.
 
         Parameters
         ----------

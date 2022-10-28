@@ -1,11 +1,11 @@
 import numpy as np
 import numpy.matlib as matlib
-from dmp_lib.transformation import Transformation
-from dmp_lib.canonical import Canonical
-from dmp_lib.goal import Goal
 import matplotlib.pyplot as plt
 import scipy.interpolate as interpolate
 from scipy.signal import savgol_filter
+from dmp_lib.transformation import Transformation
+from dmp_lib.canonical import Canonical
+from dmp_lib.goal import Goal
 from dmp_lib.geometry import quat_to_rot
 from dmp_lib.geometry import rot_to_quat
 from dmp_lib.geometry import rot_to_axis_angle
@@ -15,70 +15,195 @@ from dmp_lib.geometry import quat_to_axis_angle
 from dmp_lib.geometry import solve_discontinuities
 
 
-
 class DMP():
-    """ Implementation of Dynamic Movement Primitive (DMP) """
+    """
+    A class used to implement the DMP comprising of a canonical, goal 
+    and transformation system working together.
+
+    Attributes
+    ----------
+    canonical_sys : dmp_lib.canonical.Canonical
+        canonical system
+    goal_sys : dmp_lib.goal.Goal
+        goal system
+    transformation_sys : dmp_lib.transformation.Transformation
+        transformation system
+    z : numpy.ndarray
+        scaled velocity variable
+    x0 : numpy.ndarray
+        initial state
+    sys_dim: int
+        system dimension
+    tau : float
+        time scaling parameter
+    dt : float
+        sampling interval
+    num_basis : int
+        number of basis functions
+    centers: numpy.ndarray
+        basis function centers
+    widths: numpy.ndarray
+        basis function widths
+    weights: numpy.ndarray
+        basis function weights
+
+    Methods
+    -------
+    init_forcing(num_basis)
+        initialize parameters of the forcing term
+
+    evaluate_basis(s)
+        evaluate basis functions at phase s
+
+    evaluate_forcing(s)
+        evaluate forcing term at phase s
+
+    evaluate_weighted_basis(s)
+        evaluate weighted basis functions at phase s
+
+    reset(x0)
+        reset DMP at initial state x0
+
+    set_tau(new_tau)
+        set time scaling parameter
+
+    set_new_goal(new_g, force_goal=True)
+        set new desired goal
+
+    get_phase()
+        get current phase from canonical system
+
+    get_goal()
+        get current goal from goal system
+
+    get_output()
+        get DMP output from transformation system
+
+    step(dist=0)
+        single-step DMP update
+
+    learn_from_demo(x_demo, time_steps, filter_mode = 'cd')
+        fit forcing function to reproduce desired trajectory
+
+    get_weights()
+        get DMP weights
+
+    import_weights(new_weights)
+        import DMP weights
+
+    rollout()
+        run a DMP rollout and reset
+
+    def info()
+        return info about DMP type
+    """
+
     def __init__(self, num_basis, x0, g0, dt, tau,
-                 alpha_phase = 25./3, alpha_g = 25./2, K = 25.**2/2, D = None, alpha_stop = 25., style = 'advanced'):
+                 alpha_phase = 25./3, alpha_stop = 25., alpha_g = 25./2, 
+                 K = 25.**2/2, D = None, style = 'advanced'):
         """
-        num_basis int       : number of basis functions
-        x0 array            : initial state [sys_dim]
-        g array             : goal state [sys_dim]
-        dt float            : sampling time
-        tau float           : time constant (= final time)
-        alpha_phase float   : canonical system parameter
-        alpha_g float       : goal system parameter
-        K float             : elastic parameter in the dynamical system
-        D float             : damping parameter in the dynamical system [by default, D = 2*sqrt(K)]
-        alpha_stop          : phase stop parameter
-        style               : 'advanced' or 'classic' formulation
+        Parameters
+        ----------
+        num_basis : int
+            number of basis functions
+        x0 : numpy.ndarray
+            initial state
+        g : numpy.ndarray
+            goal state
+        tau : float
+            time scaling parameter
+        alpha_phase : float, optional
+            phase decay parameter (default is 25./3.)
+        alpha_stop : float, optional
+            phase stop parameter (default is 0)
+        alpha_g : float, optional
+            goal advancement parameter (default is 25./2.)
+            time scaling parameter
+        K : float, optional
+            stiffness parameter (default is 25.**2/2.)
+        D : float, optional
+            damping parameter (default is None -> D = 2 * sqrt(K))
+        style: string, optional
+            dynamics style (default is 'advanced')
         """
         if np.isscalar(x0):
             x0 = np.array([x0])
         if np.isscalar(g0):
             g0 = np.array([g0])
 
-        self.sys_dim = x0.size # save system dimension
+        # save system dimension
+        self.sys_dim = x0.size
 
-        self.canonical_sys = Canonical(tau, alpha_phase, alpha_stop) # init canonical system
-        self.goal_sys = Goal(g0, tau, alpha_g) # init goal system
-        self.transformation_sys = Transformation(x0, tau, K, D, style) # init transformation system
+        # init canonical system
+        self.canonical_sys = Canonical(tau, alpha_phase, alpha_stop)
+
+        # init goal system
+        self.goal_sys = Goal(g0, tau, alpha_g)
+
+        # init transformation system
+        self.transformation_sys = Transformation(x0, tau, K, D, style)
+
         self.tau = tau
         self.dt = dt
         self.num_basis = num_basis
-        self.init_forcing(num_basis) # init forcing
+
+        # init forcing
+        self.init_forcing(num_basis)
 
 
     def init_forcing(self, num_basis):
-        """
-        Initialize parameters of the forcing term
-        num_basis int       : number of basis functions
+        """Initialize parameters of the forcing term.
+
+        Parameters
+        ----------
+        num_basis : int
+            number of basis functions
         """
         self.centers = np.zeros((num_basis, self.sys_dim))
         self.widths = np.zeros((num_basis, self .sys_dim))
         self.weights = np.zeros((num_basis, self.sys_dim))
+
         # compute Gaussian centers
-        c_locations = np.exp(-self.canonical_sys.alpha_phase * np.array(list(range(num_basis)))/(num_basis-1))
-        self.centers = matlib.repmat(np.expand_dims(c_locations,1), 1, self.sys_dim) 
+        c_locations = np.exp(-self.canonical_sys.alpha_phase * \
+            np.array(list(range(num_basis))) / (num_basis - 1))
+        self.centers = \
+            matlib.repmat(np.expand_dims(c_locations, 1), 1, self.sys_dim)
+
         # compute Gaussian widths
         for k in range(num_basis-1):
-            self.widths[k,:] = 1/(self.centers[k+1,:]-self.centers[k,:])**2 
+            self.widths[k,:] = 1 / (self.centers[k+1,:] - self.centers[k,:])**2 
         self.widths[-1,:] = self.widths[-2,:]
 
 
     def evaluate_basis(self, s):
-        """
-        Evaluate basis functions in s
-        s float         : phase location
+        """Evaluate basis functions at phase s.
+
+        Parameters
+        ----------
+        s : float
+            phase location
+
+        Returns
+        -------
+        numpy.ndarray
+            basis functions values in s
         """
         if np.size(s) == 1:
-            return np.exp(-self.widths*(s-self.centers)**2)
+            return np.exp(-self.widths*(s - self.centers)**2)
 
 
     def evaluate_forcing(self, s):
-        """
-        Evaluate forcing term in s
-        s float         : phase location
+        """Evaluate forcing term at phase s.
+
+        Parameters
+        ----------
+        s : float
+            phase location
+
+        Returns
+        -------
+        numpy.ndarray
+            forcing term in s
         """
         all_phi_s = self.evaluate_basis(s)
         den = np.sum(all_phi_s, 0)
@@ -90,18 +215,29 @@ class DMP():
 
 
     def evaluate_weighted_basis(self, s):
-        """
-        Evaluate weighted basis functions in s
-        s float         : phase location
+        """Evaluate weighted basis functions at phase s.
+
+        Parameters
+        ----------
+        s : float
+            phase location
+            
+        Returns
+        -------
+        numpy.ndarray
+            weighted sum of basis functions values in s
         """
         all_phi_s = self.evaluate_basis(s)
-        return all_phi_s*self.weights
+        return all_phi_s * self.weights
 
 
     def reset(self, x0):
-        """
-        Reset DMP in initial state x0
-        x0 array        : initial state
+        """Reset DMP at initial state x0.
+
+        Parameters
+        ----------
+        x0 : numpy.ndarray
+            initial state
         """
         if np.isscalar(x0):
             x0 = np.array([x0])
@@ -111,46 +247,73 @@ class DMP():
 
 
     def set_tau(self, new_tau):
+        """Set time scaling parameter.
+
+        Parameters
+        ----------
+        new_tau: float
+            new time scaling parameter
+        """
         self.tau = new_tau
         self.canonical_sys.tau = new_tau
         self.transformation_sys.tau = new_tau
         self.goal_sys.tau = new_tau
 
 
-    def set_new_goal(self, new_g, force_goal=True):
-        """
-        Set new goal
-        new_g array     : new goal 
-        force_goal      : override g variable (or only g0)
+    def set_new_goal(self, new_g, force_goal = True):
+        """Set new desired goal.
+
+        Parameters
+        ----------
+        new_g : numpy.ndarray
+            new goal 
+        force_goal : bool, optional
+            choose if override g variable or only g0 (default is True)
         """
         self.goal_sys.set_new_goal(new_g, force_goal=force_goal) # update goal system
 
 
     def get_phase(self):
-        """
-        Get current phase from canonical system
+        """Get current phase from canonical system.
+
+        Returns
+        -------
+        float
+            phase value
         """
         return self.canonical_sys.get_phase()
 
 
     def get_goal(self):
-        """
-        Get current goal from goal system
+        """Get current goal from goal system.
+        
+        Returns
+        -------
+        numpy.ndarray
+            goal value
         """
         return self.goal_sys.get_goal()
 
 
     def get_output(self):
-        """
-        Get DMP output from transformation system
+        """Get DMP output from transformation system.
+
+        Returns
+        -------
+        list
+            a list with current DMP position and velocity
         """
         [x, z] = self.transformation_sys.get_state()
-        return x, z/self.tau
+        return x, z / self.tau
 
 
-    def step(self, dist=0):
-        """
-        Single-step DMP update
+    def step(self, dist = 0):
+        """Single-step DMP update.
+
+        Parameters
+        ----------
+        dist : float
+
         """
         s = self.get_phase()
         g = self.get_goal()
@@ -161,50 +324,71 @@ class DMP():
         self.goal_sys.step(self.dt)
 
 
-    def learn_from_demo(self, x_demo, time_steps, filter_mode = 'cd'):
-        """
-        Fit forcing function to reproduce desired trajectory (tau, x0, g0 are changed according to demo)
-        x_demo array        : target [num_steps x sys_dim]
-        time_steps array    : time steps [num_steps]
-        filter_mode string  : select filter between Savitzky-Golay ('savgol') or central difference ('cd')
+    def learn_from_demo(self, x_demo, time_steps, filter_mode = 'savgol'):
+        """Fit forcing function to reproduce desired trajectory.
+
+           Attributes tau, x0, g0 are modified according to demo.
+
+        Parameters
+        ----------
+        x_demo : numpy.ndarray
+            demo trajectory [x_demo.shape : (num_steps, sys_dim)]
+        time_steps : numpy.ndarray
+            time steps [time_steps.shape : (num_steps,)]
+        filter_mode : string, optional
+            either 'savgol' or 'cd' (default is 'savgol')
+
+        Returns
+        -------
+        list
+            list with (processed) x_demo, dx_demo, ddx_demo, time_steps
+
+        Raises
+        ------
+        ValueError
+            if x_demo and time_steps have different length
         """
         x_demo = np.reshape(x_demo, (-1, self.sys_dim))
         time_steps = time_steps-time_steps[0] # initial time to 0 sec
 
         if x_demo.shape[0] != time_steps.shape[0]:
-            raise ValueError("x_demo and time_steps must have the same number of samples")
+            raise ValueError("x_demo and time_steps must have the same length")
 
-        path_gen = interpolate.interp1d(time_steps, x_demo.T) # interpolate demo
-        time_steps = np.arange(0., time_steps[-1], self.dt) # use constant sampling intervals
+        # interpolate demo
+        path_gen = interpolate.interp1d(time_steps, x_demo.T)
+        # use constant sampling intervals
+        time_steps = np.arange(0., time_steps[-1], self.dt)
                 
         num_steps = len(time_steps)
 
-        # self.set_tau(time_steps[-1]) # set tau equal to demo time length
+        # modiffy tau
         self.set_tau(num_steps*self.dt)
 
         x_demo = path_gen(time_steps).T
 
         if filter_mode == 'savgol':
             # compute derivatives with Savitzky-Golay filter
-            x_demo = savgol_filter(x_demo, 15, 3, axis=0, mode='nearest')
-            dx_demo = savgol_filter(x_demo, 15, 3, axis=0, mode='nearest', deriv=1, delta=self.dt)
-            ddx_demo = savgol_filter(x_demo, 15, 3, axis=0, mode='nearest', deriv=2, delta=self.dt)
+            x_demo = savgol_filter(x_demo, 15, 3, axis = 0, mode = 'nearest')
+            dx_demo = savgol_filter(x_demo, 15, 3, axis = 0, mode = 'nearest',
+                                    deriv = 1, delta = self.dt)
+            ddx_demo = savgol_filter(x_demo, 15, 3, axis = 0, mode = 'nearest',
+                                     deriv = 2, delta = self.dt)
 
         elif filter_mode == 'cd':
             dx_demo = np.zeros(x_demo.shape)
             ddx_demo = np.zeros(x_demo.shape)
             # compute derivatives with central difference
             for i in range(self.sys_dim):
-                dx_demo[:,i] = np.gradient(x_demo[:,i],time_steps)
-                ddx_demo[:,i] = np.gradient(dx_demo[:,i],time_steps)
+                dx_demo[:,i] = np.gradient(x_demo[:,i], time_steps)
+                ddx_demo[:,i] = np.gradient(dx_demo[:,i], time_steps)
 
         g = x_demo[-1,:]
 
         # compute phase values
         s_demo = np.zeros(num_steps)
         s_demo[0] = self.canonical_sys.get_phase()
-        for k in range(1,num_steps):
-            dt = time_steps[k]-time_steps[k-1]
+        for k in range(1, num_steps):
+            dt = time_steps[k] - time_steps[k-1]
             self.canonical_sys.step(dt)
             s_demo[k] = self.canonical_sys.get_phase()
         self.canonical_sys.reset()       
@@ -214,12 +398,19 @@ class DMP():
         for j in range(self.sys_dim):
             # compute desired forcing term
             if self.transformation_sys.style == 'advanced':
-                f_d = self.tau**2*ddx_demo[:,j]/self.transformation_sys.K-(g[j]-x_demo[:,j])+self.tau*self.transformation_sys.D/self.transformation_sys.K*dx_demo[:,j]+(g[j]-x_demo[0,j])*s_demo            
+                f_d = self.tau**2 * ddx_demo[:,j] / self.transformation_sys.K \
+                    -(g[j] - x_demo[:,j]) + self.tau \
+                    * self.transformation_sys.D / self.transformation_sys.K \
+                    *dx_demo[:,j] + (g[j] - x_demo[0,j]) * s_demo
+
             elif self.transformation_sys.style == 'classic':
                 if g[j]==x_demo[0,j]:
                     f_d = np.zeros(x_demo[:,j].shape)
                 else:
-                    f_d = (self.tau**2*ddx_demo[:,j]-self.transformation_sys.K*(g[j]-x_demo[:,j])+self.tau*self.transformation_sys.D*dx_demo[:,j])/(g[j]-x_demo[0,j])  
+                    f_d = (self.tau**2 * ddx_demo[:,j] - \
+                        self.transformation_sys.K * (g[j] - x_demo[:,j]) + \
+                        self.tau * self.transformation_sys.D * \
+                        dx_demo[:,j]) / (g[j] - x_demo[0,j])  
             f_d_all[j,:] = f_d
 
         for j in range(self.sys_dim):
@@ -228,7 +419,7 @@ class DMP():
             Phi = np.zeros((num_steps, self.num_basis))
             for k in range(num_steps):
                 basis = self.evaluate_basis(s_demo[k])[:,j] 
-                Phi[k,:] = basis/np.sum(basis)*s_demo[k]
+                Phi[k,:] = basis / np.sum(basis)*s_demo[k]
 
             # Solve: Phi * w = f_d
             fitted_w = np.dot(np.linalg.pinv(Phi), f_d)
@@ -239,16 +430,23 @@ class DMP():
 
 
     def get_weights(self):
-        """
-        Get DMP weights
+        """Get DMP weights.
+
+        Returns
+        -------
+        numpy.ndarray
+            basis functions weights
         """
         return self.weights
 
 
     def import_weights(self, new_weights):
-        """
-        Import DMP weights
-        new_weights array   : new DMP weights [num_basis x sys_dim]
+        """Import DMP weights.
+
+        Parameters
+        ----------
+        new_weights : numpy.ndarray
+            new DMP weights [new_weights.shape = (num_basis, sys_dim)]
         """
         if new_weights.shape == self.weights.shape:
             self.weights = new_weights
@@ -256,8 +454,13 @@ class DMP():
             print("Weights dimensions not valid")
 
     def rollout(self):
-        """
-        Run a DMP rollout and reset (for visualization purposes)
+        """Run a DMP rollout and reset.
+
+        Returns
+        -------
+        list
+            list containing time_steps, x, v, g, forcing, s of rollout
+
         """
         time_steps = np.arange(0., self.tau, self.dt)
 
@@ -279,8 +482,12 @@ class DMP():
         return time_steps, x, v, g, forcing, s
 
     def info(self):
-        """
-        Is the DMP single or dual?
+        """Return info about DMP type.
+
+        Returns
+        -------
+        string
+            DMP type
         """
         return 'single'
 

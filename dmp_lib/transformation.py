@@ -36,7 +36,7 @@ class Transformation:
     get_state()
         get current goal value
     step(dt, g, s, f = 0)
-        step forward the canonical system (of dt sec) 
+        single-step transformation system update (of dt sec) 
     """
 
     def __init__(self, x0, tau, K, D = None, style = 'advanced'):
@@ -71,7 +71,7 @@ class Transformation:
 
 
     def reset(self, x0):
-        """Reset phase attribute to 1.
+        """Reset transformation system to initial state x0.
         
         Parameters
         ----------
@@ -90,18 +90,18 @@ class Transformation:
 
 
     def get_state(self):
-        """Get current phase variable value.
+        """Get current state.
 
         Returns
         -------
-            list
-                a list of numpy.ndarray containing x and z
+        list
+            a list of numpy.ndarray containing x and z
         """
         return self.x, self.z
 
 
     def step(self, dt, g, s, f = 0):
-        """Step forward the transformation system.
+        """Single-step transformation system update.
 
         Parameters
         ----------
@@ -111,8 +111,8 @@ class Transformation:
             goal position
         s : float
             phase variable
-        f : numpy.ndarray
-            forcing term
+        f : numpy.ndarray, optional
+            forcing term (default is 0)
         """
         if self.style == 'advanced':
             dz = (self.K * (g - self.x) - self.D * self.z - self.K * \

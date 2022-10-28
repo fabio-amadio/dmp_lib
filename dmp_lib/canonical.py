@@ -25,7 +25,7 @@ class Canonical:
     get_phase()
         get phase value
     step(dt, dist = 0)
-        step forward the canonical system (of dt sec) 
+        single-step canonical system update (of dt sec) 
     """
 
     def __init__(self, tau, alpha_phase, alpha_stop = 0):
@@ -46,7 +46,8 @@ class Canonical:
 
 
     def reset(self):
-        """Reset phase attribute to 1."""
+        """Reset phase attribute to 1.
+        """
         self.s = 1
 
 
@@ -55,13 +56,14 @@ class Canonical:
 
         Returns
         -------
-            float: phase value
+        float
+            phase value
         """
         return self.s
 
 
     def step(self, dt, dist = 0):
-        """Step forward the canonical system.
+        """Single-step canonical system update.
 
         Parameters
         ----------

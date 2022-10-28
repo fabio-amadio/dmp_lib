@@ -518,7 +518,7 @@ def quat_to_axis_angle(quat, auto_align = False, ref_axis = np.array([1,0,0])):
 
 
 def skew(v):
-    """Compute skew matrix form of 3D vector
+    """Compute skew matrix form of 3D vector.
 
     Parameters
     ----------
