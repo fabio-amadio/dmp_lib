@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dmp_lib.geometry &mdash; dmp_lib 1.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../index.html" class="icon icon-home"> dmp_lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">dmp_lib</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">dmp_lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      <li>dmp_lib.geometry</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for dmp_lib.geometry</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains a set of util functions for handling different </span>
+<span class="sd">rotation representations:</span>
+
+<span class="sd">    * solve_discontinuities - solve discontinuities in axis-angle traj.</span>
+<span class="sd">    * rot_to_quat - rotation matrix to quaternion conversion</span>
+<span class="sd">    * quat_to_rot - quaternion to rotation matrix conversion</span>
+<span class="sd">    * rot_to_axis_angle - rotation matrix to axis-angle conversion</span>
+<span class="sd">    * axis_angle_to_rot - axis-angle to rotation matrix conversion</span>
+<span class="sd">    * axis_angle_to_quat - axis-angle to quaternion conversion</span>
+<span class="sd">    * quat_to_axis_angle - quaternion to axis-angle conversion</span>
+<span class="sd">    * skew - get skew matrix form of a 3-dimensional vector</span>
+<span class="sd">    * quat_product - quaternion product</span>
+<span class="sd">    * quat_conj - quaternion conjugation</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+
+<div class="viewcode-block" id="solve_discontinuities"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.solve_discontinuities">[docs]</a><span class="k">def</span> <span class="nf">solve_discontinuities</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">angle</span><span class="p">,</span> <span class="n">flg_plot</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Solve discontinuities in the given axis angle trajectory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    axis : numpy.ndarray</span>
+<span class="sd">        trajectory of axis values [axis.shape : (num_step, 3)]</span>
+<span class="sd">    angle : numpy.ndarray</span>
+<span class="sd">        trajectory of angle values [angle.shape : (num_step,)]</span>
+<span class="sd">    flg_plot : bool, optional</span>
+<span class="sd">        flag to show the trajectory plot (default is False)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list of numpy.ndarray with the continuous axis and angle</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If axis and angle trajectories have different lenght</span>
+<span class="sd">        If axis 2nd dimension is not 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">num_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">axis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">num_steps</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;axis and angle must have the same lenght&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">axis</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;axis 2nd dimension must be 3&quot;</span><span class="p">)</span>
+
+    <span class="c1"># plot original trajectory</span>
+    <span class="k">if</span> <span class="n">flg_plot</span><span class="p">:</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">ncols</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">axis</span><span class="p">[:,</span><span class="n">j</span><span class="p">])</span>
+        <span class="n">axs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+
+    <span class="c1"># solve discontinuities</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">num_steps</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">axis</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">axis</span><span class="p">[</span><span class="n">k</span><span class="p">,:])</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span> \
+            <span class="n">axis</span><span class="p">[</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">+</span> <span class="n">axis</span><span class="p">[</span><span class="n">k</span><span class="p">,:])</span> <span class="p">):</span>
+
+            <span class="n">axis</span><span class="p">[</span><span class="n">k</span><span class="p">,:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">axis</span><span class="p">[</span><span class="n">k</span><span class="p">,:]</span>
+            <span class="n">angle</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">angle</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">angle</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+        
+    <span class="c1"># plot continuous trajectory</span>
+    <span class="k">if</span> <span class="n">flg_plot</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">axis</span><span class="p">[:,</span><span class="n">j</span><span class="p">])</span>
+            <span class="n">axs</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">axs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Solve discontinuities&#39;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$x$&#39;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$y$&#39;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$z$&#39;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">ylabel</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\theta$&#39;</span><span class="p">)</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span></div>
+
+<div class="viewcode-block" id="is_rotation_matrix"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.is_rotation_matrix">[docs]</a><span class="k">def</span> <span class="nf">is_rotation_matrix</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Check if a matrix is a valid rotation matrix.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    R : numpy.ndarray</span>
+<span class="sd">        input matrix [R.shape : (3, 3)]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    bool</span>
+<span class="sd">        input matrix is a valid rotation matrix</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If R is not a 3-by-3 matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">R</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;R must be a 3-by-3 matrix&quot;</span><span class="p">)</span>
+
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">6</span>
+
+    <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span> <span class="ow">or</span> 
+        <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">I</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">R</span><span class="o">.</span><span class="n">T</span><span class="p">))</span> <span class="o">&gt;</span> <span class="n">epsilon</span> <span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="rot_to_quat"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.rot_to_quat">[docs]</a><span class="k">def</span> <span class="nf">rot_to_quat</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Rotation matrix to quaternion conversion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    R : numpy.ndarray</span>
+<span class="sd">        rotation matrix [R.shape : (3, 3)]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float]</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If R is not a valid rotation matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_rotation_matrix</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;R must be a valid rotation matrix&quot;</span><span class="p">)</span>
+
+    <span class="n">epsilon</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">6</span>
+
+    <span class="n">tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tr</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+
+        <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">tr</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+        <span class="n">qw</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qx</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">sqrt_tr</span><span class="p">)</span>
+        <span class="n">qy</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">sqrt_tr</span><span class="p">)</span>
+        <span class="n">qz</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">sqrt_tr</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="ow">and</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]):</span>
+
+        <span class="c1"># max value at R[1,1]</span>
+        <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+        <span class="n">qy</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">sqrt_tr</span>
+
+        <span class="k">if</span> <span class="n">sqrt_tr</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">sqrt_tr</span>
+
+        <span class="n">qw</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qx</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qz</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+
+    <span class="k">elif</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]:</span>
+
+        <span class="c1"># max value at R[2,2]</span>
+        <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+        <span class="n">qz</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">sqrt_tr</span>
+
+        <span class="k">if</span> <span class="n">sqrt_tr</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">sqrt_tr</span>
+
+        <span class="n">qw</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qx</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qy</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="c1"># max value at R[0,0]</span>
+        <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+        <span class="n">qx</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+
+        <span class="k">if</span> <span class="n">sqrt_tr</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="n">sqrt_tr</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="n">sqrt_tr</span>
+
+        <span class="n">qw</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qy</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+        <span class="n">qz</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="n">sqrt_tr</span>
+
+    <span class="k">return</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">qz</span><span class="p">,</span> <span class="n">qw</span></div>
+
+
+<div class="viewcode-block" id="quat_to_rot"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.quat_to_rot">[docs]</a><span class="k">def</span> <span class="nf">quat_to_rot</span><span class="p">(</span><span class="n">quat</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Quaternion to rotation matrix conversion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    quat : list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    R : numpy.ndarray</span>
+<span class="sd">        rotation matrix [R.shape : (3, 3)]</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If input list dimension is not 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="c1"># check normalization</span>
+    <span class="n">quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+    <span class="k">if</span>  <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">norm</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># quat is not normalized</span>
+        <span class="n">quat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">quat</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">))</span>
+
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">qz</span><span class="p">,</span> <span class="n">qw</span> <span class="o">=</span> <span class="n">quat</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qy</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qz</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">*</span> <span class="n">qy</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qz</span> <span class="o">*</span> <span class="n">qw</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">*</span> <span class="n">qz</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qy</span> <span class="o">*</span> <span class="n">qw</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">*</span> <span class="n">qy</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qz</span> <span class="o">*</span> <span class="n">qw</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qz</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qy</span> <span class="o">*</span> <span class="n">qz</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">*</span> <span class="n">qw</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">*</span> <span class="n">qz</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qy</span> <span class="o">*</span> <span class="n">qw</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qy</span> <span class="o">*</span> <span class="n">qz</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span> <span class="o">*</span> <span class="n">qw</span>
+    <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qx</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">qy</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">R</span></div>
+
+
+<div class="viewcode-block" id="rot_to_axis_angle"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.rot_to_axis_angle">[docs]</a><span class="k">def</span> <span class="nf">rot_to_axis_angle</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">auto_align</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ref_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])):</span>
+    <span class="sd">&quot;&quot;&quot;Rotation matrix to axis-angle conversion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    R : numpy.ndarray</span>
+<span class="sd">        rotation matrix [R.shape : (3, 3)]</span>
+<span class="sd">    auto_align : bool, optional</span>
+<span class="sd">        flag to align axis-angle with reference axis (default is False)</span>
+<span class="sd">    ref_axis : numpy.ndarray, optional</span>
+<span class="sd">        reference axis for auto alignment (default is np.array([1,0,0]))</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list containing axis [numpy.ndarray] and angle [float]</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If R is not a valid rotation matrix</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_rotation_matrix</span><span class="p">(</span><span class="n">R</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;R must be a valid rotation matrix&quot;</span><span class="p">)</span>
+
+    <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span> <span class="o">=</span> <span class="n">quat_to_axis_angle</span><span class="p">(</span><span class="n">rot_to_quat</span><span class="p">(</span><span class="n">R</span><span class="p">),</span> <span class="n">auto_align</span> <span class="o">=</span> <span class="n">auto_align</span><span class="p">,</span> 
+                                                     <span class="n">ref_axis</span> <span class="o">=</span> <span class="n">ref_axis</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span></div>
+
+
+<span class="c1"># def rot_to_axis_angle(R, auto_align = False, ref_axis = np.array([1,0,0])):</span>
+<span class="c1">#     &quot;&quot;&quot;Rotation matrix to axis-angle conversion.</span>
+
+<span class="c1">#     Parameters</span>
+<span class="c1">#     ----------</span>
+<span class="c1">#     R : numpy.ndarray</span>
+<span class="c1">#         rotation matrix [R.shape : (3, 3)]</span>
+<span class="c1">#     auto_align : bool, optional</span>
+<span class="c1">#         flag to align axis-angle with reference axis (default is False)</span>
+<span class="c1">#     ref_axis : numpy.ndarray, optional</span>
+<span class="c1">#         reference axis for auto alignment (default is np.array([1,0,0]))</span>
+
+<span class="c1">#     Returns</span>
+<span class="c1">#     ------</span>
+<span class="c1">#     list</span>
+<span class="c1">#         a list containing axis [numpy.ndarray] and angle [float]</span>
+
+<span class="c1">#     Raises</span>
+<span class="c1">#     ------</span>
+<span class="c1">#     ValueError</span>
+<span class="c1">#         If R is not a valid rotation matrix</span>
+<span class="c1">#     &quot;&quot;&quot;</span>
+<span class="c1">#     R = np.array(R)</span>
+<span class="c1">#     if not is_rotation_matrix(R):</span>
+<span class="c1">#         raise ValueError(&quot;R must be a valid rotation matrix&quot;)</span>
+
+<span class="c1">#     epsilon_round = 0.01 # rounding error margin</span>
+<span class="c1">#     epsilon_singularity = 0.1 # margin to distinguish between 0 and 180 deg</span>
+
+<span class="c1">#     if (abs(R[0,1] - R[1,0]) &lt; epsilon_round and</span>
+<span class="c1">#         abs(R[0,2] - R[2,0]) &lt; epsilon_round and</span>
+<span class="c1">#         abs(R[1,2] - R[1,0]) &lt; epsilon_round):</span>
+<span class="c1">#         # singularity found</span>
+
+<span class="c1">#         if (abs(R[0,1] - R[1,0]) &lt; epsilon_singularity and</span>
+<span class="c1">#             abs(R[0,2] - R[2,0]) &lt; epsilon_singularity and</span>
+<span class="c1">#             abs(R[1,2] - R[1,0]) &lt; epsilon_singularity and</span>
+<span class="c1">#             abs(R[0,0] + R[1,1] + R[2,2]-3) &lt; epsilon_singularity):</span>
+
+<span class="c1">#             angle = 0</span>
+<span class="c1">#             axis = np.array([1,0,0])</span>
+
+<span class="c1">#         else:</span>
+
+<span class="c1">#             angle = np.pi</span>
+<span class="c1">#             xx = (R[0,0] + 1) / 2</span>
+<span class="c1">#             yy = (R[1,1] + 1) / 2</span>
+<span class="c1">#             zz = (R[2,2] + 1) / 2</span>
+<span class="c1">#             xy = (R[0,1] + R[1,0]) / 4</span>
+<span class="c1">#             xz = (R[0,2] + R[2,0]) / 4</span>
+<span class="c1">#             yz = (R[1,2] + R[2,1]) / 4</span>
+
+<span class="c1">#             if (xx &gt; yy and xx &gt; zz):</span>
+<span class="c1">#                 # R[0][0] is the largest diagonal term</span>
+<span class="c1">#                 if (xx &lt; epsilon_round):</span>
+<span class="c1">#                     x = 0</span>
+<span class="c1">#                     y = 1 / np.sqrt(2)</span>
+<span class="c1">#                     z = 1 / np.sqrt(2)</span>
+<span class="c1">#                 else:</span>
+<span class="c1">#                     x = np.sqrt(xx)</span>
+<span class="c1">#                     y = xy / x</span>
+<span class="c1">#                     z = xz / x</span>
+<span class="c1">#             elif (yy &gt; zz):</span>
+<span class="c1">#                 # R[1][1] is the largest diagonal term</span>
+<span class="c1">#                 if (yy &lt; epsilon_round):</span>
+<span class="c1">#                     x = 1 / np.sqrt(2)</span>
+<span class="c1">#                     y = 0</span>
+<span class="c1">#                     z = 1 / np.sqrt(2)</span>
+<span class="c1">#                 else:</span>
+<span class="c1">#                     y = np.sqrt(yy)</span>
+<span class="c1">#                     x = xy / y</span>
+<span class="c1">#                     z = yz / y</span>
+<span class="c1">#             else:</span>
+<span class="c1">#                 # R[2][2] is the largest diagonal term</span>
+<span class="c1">#                 if (zz &lt; epsilon_round):</span>
+<span class="c1">#                     x = 1 / np.sqrt(2)</span>
+<span class="c1">#                     y = 1 / np.sqrt(2)</span>
+<span class="c1">#                     z = 0</span>
+<span class="c1">#                 else:</span>
+<span class="c1">#                     z = np.sqrt(zz)</span>
+<span class="c1">#                     x = xz / z</span>
+<span class="c1">#                     y = yz / z</span>
+
+<span class="c1">#             axis = np.array([x,y,z])</span>
+
+<span class="c1">#     else: # no singularities</span>
+<span class="c1">#         s = np.sqrt((R[2,1] - R[1,2]) * (R[2,1] - R[1,2]) \</span>
+<span class="c1">#             + (R[0,2] - R[2,0]) * (R[0,2] - R[2,0]) \</span>
+<span class="c1">#             + (R[1,0] - R[0,1]) * (R[1,0] - R[0,1])) # used to normalise</span>
+
+<span class="c1">#         angle = np.arccos((R[0,0] + R[1,1] + R[2,2] -1) / 2)</span>
+<span class="c1">#         x = (R[2,1] - R[1,2]) / s</span>
+<span class="c1">#         y = (R[0,2] - R[2,0]) / s</span>
+<span class="c1">#         z = (R[1,0] - R[0,1]) / s</span>
+<span class="c1">#         axis = np.array([x,y,z])</span>
+
+<span class="c1">#     if auto_align:</span>
+<span class="c1">#         if np.dot(axis,ref_axis) &lt; 0.0:</span>
+<span class="c1">#             axis = - axis</span>
+<span class="c1">#             angle = - angle + 2 * np.pi</span>
+
+<span class="c1">#     return axis, angle</span>
+
+
+<div class="viewcode-block" id="axis_angle_to_rot"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.axis_angle_to_rot">[docs]</a><span class="k">def</span> <span class="nf">axis_angle_to_rot</span><span class="p">(</span><span class="n">axis_angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Axis-angle to rotation matrix conversion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    axis_angle : numpy.ndarray</span>
+<span class="sd">        rotation matrix [axis_angle.shape : (3,)]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        rotation matrix conversion</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If input list dimension is not 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axis_angle</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">axis_angle</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">angle</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">R</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">axis_angle</span> <span class="o">/</span> <span class="n">angle</span>
+
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">c</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">-</span> <span class="n">z</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">y</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">z</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">y</span> <span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span> <span class="o">-</span> <span class="n">x</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">x</span> <span class="o">*</span> <span class="n">z</span> <span class="o">-</span> <span class="n">y</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">y</span> <span class="o">*</span> <span class="n">z</span> <span class="o">+</span> <span class="n">x</span> <span class="o">*</span> <span class="n">s</span>
+        <span class="n">R</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span> <span class="o">*</span> <span class="n">z</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c</span>
+
+        <span class="k">return</span> <span class="n">R</span></div>
+
+
+<div class="viewcode-block" id="axis_angle_to_quat"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.axis_angle_to_quat">[docs]</a><span class="k">def</span> <span class="nf">axis_angle_to_quat</span><span class="p">(</span><span class="n">axis_angle</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Axis-angle to quaternion conversion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    axis_angle : numpy.ndarray</span>
+<span class="sd">        rotation matrix [axis_angle.shape : (3,)]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float]</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If input list dimension is not 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">axis_angle</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">axis_angle</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">angle</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># angle = 0</span>
+        <span class="n">qx</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">qy</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">qz</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">qw</span> <span class="o">=</span> <span class="mf">1.</span>
+
+    <span class="k">else</span><span class="p">:</span>
+
+        <span class="n">axis</span> <span class="o">=</span> <span class="n">axis_angle</span> <span class="o">/</span> <span class="n">angle</span>
+
+        <span class="n">qx</span> <span class="o">=</span> <span class="n">axis</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">qy</span> <span class="o">=</span> <span class="n">axis</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">qz</span> <span class="o">=</span> <span class="n">axis</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">qw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">qz</span><span class="p">,</span> <span class="n">qw</span></div>
+
+
+<div class="viewcode-block" id="quat_to_axis_angle"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.quat_to_axis_angle">[docs]</a><span class="k">def</span> <span class="nf">quat_to_axis_angle</span><span class="p">(</span><span class="n">quat</span><span class="p">,</span> <span class="n">auto_align</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">ref_axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])):</span>
+    <span class="sd">&quot;&quot;&quot;Quaternion to rotation matrix conversion.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    quat : list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float]</span>
+<span class="sd">    auto_align : bool, optional</span>
+<span class="sd">        flag to align axis-angle with reference axis (default is False)</span>
+<span class="sd">    ref_axis : numpy.ndarray, optional</span>
+<span class="sd">        reference axis for auto alignment (default is np.array([1,0,0]))</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list containing axis [numpy.ndarray] and angle [float]</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If input list dimension is not 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="c1"># check normalization</span>
+    <span class="n">quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+    <span class="k">if</span>  <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">norm</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># quat is not normalized</span>
+        <span class="n">quat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">quat</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">))</span>
+
+    <span class="n">qx</span><span class="p">,</span> <span class="n">qy</span><span class="p">,</span> <span class="n">qz</span><span class="p">,</span> <span class="n">qw</span> <span class="o">=</span> <span class="n">quat</span>
+
+    <span class="n">angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arccos</span><span class="p">(</span><span class="n">qw</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qw</span> <span class="o">*</span> <span class="n">qw</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">s</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># angle = 0</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">qx</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qw</span> <span class="o">*</span> <span class="n">qw</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">qy</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qw</span> <span class="o">*</span> <span class="n">qw</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="n">qz</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">qw</span> <span class="o">*</span> <span class="n">qw</span><span class="p">)</span>
+
+    <span class="n">axis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">z</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">auto_align</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span><span class="n">ref_axis</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">axis</span> <span class="o">=</span> <span class="o">-</span> <span class="n">axis</span>
+            <span class="n">angle</span> <span class="o">=</span> <span class="o">-</span> <span class="n">angle</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+    <span class="k">return</span> <span class="n">axis</span><span class="p">,</span> <span class="n">angle</span></div>
+
+
+<div class="viewcode-block" id="skew"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.skew">[docs]</a><span class="k">def</span> <span class="nf">skew</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute skew matrix form of 3D vector.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    v : numpy.ndarray</span>
+<span class="sd">        vector [v.shape = (3,)]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        skew matrix form</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If v dimension is not 3</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span>  <span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span>  <span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">s</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span>  <span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+
+
+<div class="viewcode-block" id="quat_product"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.quat_product">[docs]</a><span class="k">def</span> <span class="nf">quat_product</span><span class="p">(</span><span class="n">q1</span><span class="p">,</span> <span class="n">q2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Quaternion product.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    q1 : list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float] of 1st quaternion</span>
+<span class="sd">    q2 : list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float] of 2nd quaternion</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float] of product quaternion</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If q1 dimension is not 4</span>
+<span class="sd">        If q2 dimension is not 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="n">q1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
+    <span class="n">q2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span>
+
+    <span class="c1"># check normalization</span>
+    <span class="n">norm_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q1</span><span class="p">)</span>
+    <span class="n">norm_2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">q2</span><span class="p">)</span>
+    <span class="k">if</span>  <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">norm_1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># q1 is not normalized</span>
+        <span class="n">q1</span> <span class="o">=</span> <span class="n">q1</span> <span class="o">/</span> <span class="n">norm_1</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">norm_2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># q2 is not normalized</span>
+        <span class="n">q2</span> <span class="o">=</span> <span class="n">q2</span> <span class="o">/</span> <span class="n">norm_2</span>      
+ 
+    <span class="n">q1w</span> <span class="o">=</span> <span class="n">q1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">q2w</span> <span class="o">=</span> <span class="n">q2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">v1</span> <span class="o">=</span> <span class="n">q1</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">v2</span> <span class="o">=</span> <span class="n">q2</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">prod_w</span> <span class="o">=</span> <span class="n">q1w</span> <span class="o">*</span> <span class="n">q2w</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">v1</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+    <span class="n">prod_v</span> <span class="o">=</span> <span class="n">q1w</span> <span class="o">*</span> <span class="n">v2</span> <span class="o">+</span> <span class="n">q2w</span> <span class="o">*</span> <span class="n">v1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">prod_v</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">prod_v</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">prod_v</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">prod_w</span></div>
+
+
+<div class="viewcode-block" id="quat_conj"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.geometry.quat_conj">[docs]</a><span class="k">def</span> <span class="nf">quat_conj</span><span class="p">(</span><span class="n">quat</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Quaternion conjugation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    quat : list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    ------</span>
+<span class="sd">    list</span>
+<span class="sd">        a list containing qx, qy, qz, qw [float] of conjugate quaternion</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If input list dimension is not 4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong input size&quot;</span><span class="p">)</span>
+
+    <span class="n">quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+
+    <span class="c1"># check normalization</span>
+    <span class="n">quat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+    <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">)</span>
+    <span class="k">if</span>  <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">norm</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">10</span><span class="o">**-</span><span class="mi">4</span><span class="p">:</span> <span class="c1"># quat is not normalized</span>
+        <span class="n">quat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">quat</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">quat</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="o">-</span><span class="n">quat</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="n">quat</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">quat</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">quat</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Fabio Amadio.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
