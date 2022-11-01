@@ -68,7 +68,7 @@
   <h1>Source code for dmp_lib.goal</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="Goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.goal.Goal">[docs]</a><span class="k">class</span> <span class="nc">Goal</span><span class="p">:</span>
+<div class="viewcode-block" id="Goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.goal.Goal">[docs]</a><span class="k">class</span> <span class="nc">Goal</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class used to implement the DMP goal system.</span>
 <span class="sd">    The goal system drives goal variable &#39;g&#39; towards a desired &#39;g0&#39;.</span>
@@ -105,7 +105,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g0</span>
 
 
-<div class="viewcode-block" id="Goal.set_new_goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.goal.Goal.set_new_goal">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Goal.set_new_goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.goal.Goal.set_new_goal">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set new desired goal.</span>
 
 <span class="sd">        Parameters</span>
@@ -126,7 +126,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Goal dimensions not valid&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Goal.get_goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.goal.Goal.get_goal">[docs]</a>    <span class="k">def</span> <span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Goal.get_goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.goal.Goal.get_goal">[docs]</a>    <span class="k">def</span> <span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get current goal variable value.</span>
 
 <span class="sd">        Returns</span>
@@ -137,7 +137,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">g</span></div>
 
 
-<div class="viewcode-block" id="Goal.step"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.goal.Goal.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+<div class="viewcode-block" id="Goal.step"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.goal.Goal.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Single-step goal system update.</span>
 
 <span class="sd">        Parameters</span>

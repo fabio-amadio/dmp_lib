@@ -68,7 +68,7 @@
   <h1>Source code for dmp_lib.canonical</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="Canonical"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.canonical.Canonical">[docs]</a><span class="k">class</span> <span class="nc">Canonical</span><span class="p">:</span>
+<div class="viewcode-block" id="Canonical"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.canonical.Canonical">[docs]</a><span class="k">class</span> <span class="nc">Canonical</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class used to implement the DMP canonical system.</span>
 <span class="sd">    The canonical system drives phase variable &#39;s&#39; from 1 to 0, </span>
@@ -103,13 +103,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="mi">1</span>
 
 
-<div class="viewcode-block" id="Canonical.reset"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.canonical.Canonical.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Canonical.reset"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.canonical.Canonical.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset phase attribute to 1.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="Canonical.get_phase"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.canonical.Canonical.get_phase">[docs]</a>    <span class="k">def</span> <span class="nf">get_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Canonical.get_phase"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.canonical.Canonical.get_phase">[docs]</a>    <span class="k">def</span> <span class="nf">get_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get current phase variable value.</span>
 
 <span class="sd">        Returns</span>
@@ -120,7 +120,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span></div>
 
 
-<div class="viewcode-block" id="Canonical.step"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.canonical.Canonical.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Canonical.step"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.canonical.Canonical.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Single-step canonical system update.</span>
 
 <span class="sd">        Parameters</span>

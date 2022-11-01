@@ -68,7 +68,7 @@
   <h1>Source code for dmp_lib.transformation</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<div class="viewcode-block" id="Transformation"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.transformation.Transformation">[docs]</a><span class="k">class</span> <span class="nc">Transformation</span><span class="p">:</span>
+<div class="viewcode-block" id="Transformation"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.transformation.Transformation">[docs]</a><span class="k">class</span> <span class="nc">Transformation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class used to implement the DMP transformation system.</span>
 <span class="sd">    The transformation system drives the DMP state &#39;x&#39; towards a goal</span>
@@ -128,7 +128,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sys_dim</span> <span class="o">=</span> <span class="n">x0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="Transformation.reset"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.transformation.Transformation.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
+<div class="viewcode-block" id="Transformation.reset"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.transformation.Transformation.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset transformation system to initial state x0.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
@@ -147,7 +147,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Position dimensions not valid&#39;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Transformation.get_state"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.transformation.Transformation.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Transformation.get_state"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.transformation.Transformation.get_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get current state.</span>
 
 <span class="sd">        Returns</span>
@@ -158,7 +158,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">z</span></div>
 
 
-<div class="viewcode-block" id="Transformation.step"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.transformation.Transformation.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Transformation.step"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.transformation.Transformation.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dt</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">f</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Single-step transformation system update.</span>
 
 <span class="sd">        Parameters</span>

@@ -84,7 +84,7 @@
 <span class="kn">from</span> <span class="nn">dmp_lib.geometry</span> <span class="kn">import</span> <span class="n">is_rotation_matrix</span>
 
 
-<div class="viewcode-block" id="DMP"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP">[docs]</a><span class="k">class</span> <span class="nc">DMP</span><span class="p">():</span>
+<div class="viewcode-block" id="DMP"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP">[docs]</a><span class="k">class</span> <span class="nc">DMP</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class used to implement the DMP comprising of a canonical, goal </span>
 <span class="sd">    and transformation system working together.</span>
@@ -192,7 +192,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">init_forcing</span><span class="p">(</span><span class="n">num_basis</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="DMP.init_forcing"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.init_forcing">[docs]</a>    <span class="k">def</span> <span class="nf">init_forcing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_basis</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.init_forcing"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.init_forcing">[docs]</a>    <span class="k">def</span> <span class="nf">init_forcing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_basis</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize parameters of the forcing term.</span>
 
 <span class="sd">        Parameters</span>
@@ -216,7 +216,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,:]</span></div>
 
 
-<div class="viewcode-block" id="DMP.evaluate_basis"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.evaluate_basis">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.evaluate_basis"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.evaluate_basis">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate basis functions at phase s.</span>
 
 <span class="sd">        Parameters</span>
@@ -233,7 +233,7 @@
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">widths</span><span class="o">*</span><span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">centers</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DMP.evaluate_forcing"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.evaluate_forcing">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_forcing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.evaluate_forcing"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.evaluate_forcing">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_forcing</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate forcing term at phase s.</span>
 
 <span class="sd">        Parameters</span>
@@ -255,7 +255,7 @@
         <span class="k">return</span> <span class="n">f</span></div>
 
 
-<div class="viewcode-block" id="DMP.evaluate_weighted_basis"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.evaluate_weighted_basis">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_weighted_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.evaluate_weighted_basis"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.evaluate_weighted_basis">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_weighted_basis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate weighted basis functions at phase s.</span>
 
 <span class="sd">        Parameters</span>
@@ -272,7 +272,7 @@
         <span class="k">return</span> <span class="n">all_phi_s</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span></div>
 
 
-<div class="viewcode-block" id="DMP.reset"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.reset"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset DMP at initial state x0.</span>
 
 <span class="sd">        Parameters</span>
@@ -287,7 +287,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">transformation_sys</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span> <span class="c1"># reset transformation system</span></div>
 
 
-<div class="viewcode-block" id="DMP.set_tau"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.set_tau">[docs]</a>    <span class="k">def</span> <span class="nf">set_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_tau</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.set_tau"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.set_tau">[docs]</a>    <span class="k">def</span> <span class="nf">set_tau</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_tau</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set time scaling parameter.</span>
 
 <span class="sd">        Parameters</span>
@@ -301,7 +301,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">goal_sys</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">new_tau</span></div>
 
 
-<div class="viewcode-block" id="DMP.set_new_goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.set_new_goal">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.set_new_goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.set_new_goal">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set new desired goal.</span>
 
 <span class="sd">        Parameters</span>
@@ -315,7 +315,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">goal_sys</span><span class="o">.</span><span class="n">set_new_goal</span><span class="p">(</span><span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span><span class="o">=</span><span class="n">force_goal</span><span class="p">)</span> <span class="c1"># update goal system</span></div>
 
 
-<div class="viewcode-block" id="DMP.get_phase"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.get_phase">[docs]</a>    <span class="k">def</span> <span class="nf">get_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.get_phase"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.get_phase">[docs]</a>    <span class="k">def</span> <span class="nf">get_phase</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get current phase from canonical system.</span>
 
 <span class="sd">        Returns</span>
@@ -326,7 +326,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">canonical_sys</span><span class="o">.</span><span class="n">get_phase</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="DMP.get_goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.get_goal">[docs]</a>    <span class="k">def</span> <span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.get_goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.get_goal">[docs]</a>    <span class="k">def</span> <span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get current goal from goal system.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
@@ -337,7 +337,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">goal_sys</span><span class="o">.</span><span class="n">get_goal</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="DMP.get_output"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.get_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.get_output"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.get_output">[docs]</a>    <span class="k">def</span> <span class="nf">get_output</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get DMP output from transformation system.</span>
 
 <span class="sd">        Returns</span>
@@ -349,7 +349,7 @@
         <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">z</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span></div>
 
 
-<div class="viewcode-block" id="DMP.step"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.step"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Single-step DMP update.</span>
 
 <span class="sd">        Parameters</span>
@@ -366,7 +366,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">goal_sys</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DMP.learn_from_demo"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.learn_from_demo">[docs]</a>    <span class="k">def</span> <span class="nf">learn_from_demo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_demo</span><span class="p">,</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">filter_mode</span> <span class="o">=</span> <span class="s1">&#39;savgol&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.learn_from_demo"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.learn_from_demo">[docs]</a>    <span class="k">def</span> <span class="nf">learn_from_demo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_demo</span><span class="p">,</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">filter_mode</span> <span class="o">=</span> <span class="s1">&#39;savgol&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit forcing function to reproduce desired trajectory.</span>
 
 <span class="sd">           Attributes tau, x0, g0 are modified according to demo.</span>
@@ -473,7 +473,7 @@
         <span class="k">return</span> <span class="n">x_demo</span><span class="p">,</span> <span class="n">dx_demo</span><span class="p">,</span> <span class="n">ddx_demo</span><span class="p">,</span> <span class="n">time_steps</span></div>
 
 
-<div class="viewcode-block" id="DMP.get_weights"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.get_weights">[docs]</a>    <span class="k">def</span> <span class="nf">get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.get_weights"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.get_weights">[docs]</a>    <span class="k">def</span> <span class="nf">get_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get DMP weights.</span>
 
 <span class="sd">        Returns</span>
@@ -484,7 +484,7 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span></div>
 
 
-<div class="viewcode-block" id="DMP.import_weights"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.import_weights">[docs]</a>    <span class="k">def</span> <span class="nf">import_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_weights</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.import_weights"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.import_weights">[docs]</a>    <span class="k">def</span> <span class="nf">import_weights</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_weights</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Import DMP weights.</span>
 
 <span class="sd">        Parameters</span>
@@ -497,7 +497,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Weights dimensions not valid&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="DMP.rollout"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.rollout"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run a DMP rollout and reset.</span>
 
 <span class="sd">        Returns</span>
@@ -526,7 +526,7 @@
 
         <span class="k">return</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">forcing</span><span class="p">,</span> <span class="n">s</span></div>
 
-<div class="viewcode-block" id="DMP.info"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.DMP.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DMP.info"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.DMP.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return info about DMP type.</span>
 
 <span class="sd">        Returns</span>
@@ -537,7 +537,7 @@
         <span class="k">return</span> <span class="s1">&#39;single&#39;</span></div></div>
 
 
-<div class="viewcode-block" id="Bimanual_DMP"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP">[docs]</a><span class="k">class</span> <span class="nc">Bimanual_DMP</span><span class="p">(</span><span class="n">DMP</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_DMP"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP">[docs]</a><span class="k">class</span> <span class="nc">Bimanual_DMP</span><span class="p">(</span><span class="n">DMP</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class used to implement the Bimanual DMP that controls a virtual </span>
 <span class="sd">    frame placed between the two end-effectors. Each end-effector pose </span>
@@ -659,7 +659,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R_left</span> <span class="o">=</span> <span class="n">R_left</span>
 
 
-<div class="viewcode-block" id="Bimanual_DMP.get_poses"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP.get_poses">[docs]</a>    <span class="k">def</span> <span class="nf">get_poses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_DMP.get_poses"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP.get_poses">[docs]</a>    <span class="k">def</span> <span class="nf">get_poses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get end-effector positions from virtual frame pose.</span>
 
 <span class="sd">        Returns</span>
@@ -708,7 +708,7 @@
         <span class="k">return</span> <span class="n">p_r</span><span class="p">,</span> <span class="n">q_r</span><span class="p">,</span> <span class="n">p_l</span><span class="p">,</span> <span class="n">q_l</span></div>
 
 
-<div class="viewcode-block" id="Bimanual_DMP.rollout"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_DMP.rollout"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run a DMP rollout and reset.</span>
 
 <span class="sd">        Returns</span>
@@ -742,7 +742,7 @@
 
         <span class="k">return</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">p_r</span><span class="p">,</span> <span class="n">q_r</span><span class="p">,</span> <span class="n">p_l</span><span class="p">,</span> <span class="n">q_l</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">forcing</span><span class="p">,</span> <span class="n">s</span></div>
 
-<div class="viewcode-block" id="Bimanual_DMP.info"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_DMP.info"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_DMP.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return info about DMP type.</span>
 
 <span class="sd">        Returns</span>
@@ -754,7 +754,7 @@
 
 
 
-<div class="viewcode-block" id="Target_DMP"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP">[docs]</a><span class="k">class</span> <span class="nc">Target_DMP</span><span class="p">(</span><span class="n">DMP</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP">[docs]</a><span class="k">class</span> <span class="nc">Target_DMP</span><span class="p">(</span><span class="n">DMP</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Target-Referred DMP subclass (extension of DMP).</span>
 <span class="sd">    A class used to implement the Target-Referred DMP (TR-DMP) that</span>
 <span class="sd">    learned demo trajectory w.r.t. a target reference frame that can</span>
@@ -853,7 +853,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">w_H_t</span> <span class="o">=</span> <span class="n">w_H_t</span>
 
-<div class="viewcode-block" id="Target_DMP.learn_from_demo"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.learn_from_demo">[docs]</a>    <span class="k">def</span> <span class="nf">learn_from_demo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_demo</span><span class="p">,</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">filter_mode</span> <span class="o">=</span> <span class="s1">&#39;cd&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.learn_from_demo"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.learn_from_demo">[docs]</a>    <span class="k">def</span> <span class="nf">learn_from_demo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_demo</span><span class="p">,</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">filter_mode</span> <span class="o">=</span> <span class="s1">&#39;cd&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit forcing function to reproduce desired trajectory.</span>
 
 <span class="sd">           Attributes tau, x0, g0 are modified according to demo.</span>
@@ -996,7 +996,7 @@
         <span class="k">return</span> <span class="n">x_demo</span><span class="p">,</span> <span class="n">dx_demo</span><span class="p">,</span> <span class="n">ddx_demo</span><span class="p">,</span> <span class="n">time_steps</span></div>
 
 
-<div class="viewcode-block" id="Target_DMP.get_pose"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.get_pose">[docs]</a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.get_pose"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.get_pose">[docs]</a>    <span class="k">def</span> <span class="nf">get_pose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get end-effector pose w.r.t. world frame</span>
 
 <span class="sd">        Returns</span>
@@ -1036,7 +1036,7 @@
         <span class="k">return</span> <span class="n">w_p_ee</span><span class="p">,</span> <span class="n">w_q_ee</span></div>
 
 
-<div class="viewcode-block" id="Target_DMP.rollout"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.rollout"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run a DMP rollout and reset.</span>
 
 <span class="sd">        Returns</span>
@@ -1070,7 +1070,7 @@
         <span class="k">return</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">w_p_ee</span><span class="p">,</span> <span class="n">w_q_ee</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">forcing</span><span class="p">,</span> <span class="n">s</span></div>
 
 
-<div class="viewcode-block" id="Target_DMP.set_new_target_frame"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.set_new_target_frame">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_target_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w_H_t</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.set_new_target_frame"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.set_new_target_frame">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_target_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">w_H_t</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set new world-to-target transform</span>
 
 <span class="sd">        Parameters</span>
@@ -1093,7 +1093,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">w_H_t</span> <span class="o">=</span> <span class="n">w_H_t</span></div>
         
 
-<div class="viewcode-block" id="Target_DMP.reset"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">in_world_frame</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.reset"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">in_world_frame</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Reset DMP at initial state x0.</span>
 
 <span class="sd">        Parameters</span>
@@ -1137,7 +1137,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">transformation_sys</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Target_DMP.set_new_goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.set_new_goal">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">in_world_frame</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.set_new_goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.set_new_goal">[docs]</a>    <span class="k">def</span> <span class="nf">set_new_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">in_world_frame</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set new desired goal.</span>
 
 <span class="sd">        Parameters</span>
@@ -1180,7 +1180,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">goal_sys</span><span class="o">.</span><span class="n">set_new_goal</span><span class="p">(</span><span class="n">new_g</span><span class="p">,</span> <span class="n">force_goal</span> <span class="o">=</span> <span class="n">force_goal</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Target_DMP.get_goal"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.get_goal">[docs]</a>    <span class="k">def</span> <span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_world_frame</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Target_DMP.get_goal"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP.get_goal">[docs]</a>    <span class="k">def</span> <span class="nf">get_goal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_world_frame</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set new desired goal.</span>
 
 <span class="sd">        Parameters</span>
@@ -1217,7 +1217,7 @@
             <span class="k">return</span> <span class="n">g_in_ref</span></div></div>
 
 
-<div class="viewcode-block" id="Bimanual_Target_DMP"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP">[docs]</a><span class="k">class</span> <span class="nc">Bimanual_Target_DMP</span><span class="p">(</span><span class="n">Target_DMP</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_Target_DMP"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP">[docs]</a><span class="k">class</span> <span class="nc">Bimanual_Target_DMP</span><span class="p">(</span><span class="n">Target_DMP</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A class used to implement the Target-Referred (TR) Bimanual DMP</span>
 <span class="sd">    that controls a virtual frame placed between the two end-effectors.</span>
@@ -1345,7 +1345,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">R_right</span> <span class="o">=</span> <span class="n">R_right</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">R_left</span> <span class="o">=</span> <span class="n">R_left</span>
 
-<div class="viewcode-block" id="Bimanual_Target_DMP.get_poses"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP.get_poses">[docs]</a>    <span class="k">def</span> <span class="nf">get_poses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_Target_DMP.get_poses"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP.get_poses">[docs]</a>    <span class="k">def</span> <span class="nf">get_poses</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Get end-effector positions from virtual frame pose.</span>
 
 <span class="sd">        Returns</span>
@@ -1394,7 +1394,7 @@
 
         <span class="k">return</span> <span class="n">p_r</span><span class="p">,</span> <span class="n">q_r</span><span class="p">,</span> <span class="n">p_l</span><span class="p">,</span> <span class="n">q_l</span></div>
 
-<div class="viewcode-block" id="Bimanual_Target_DMP.rollout"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_Target_DMP.rollout"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP.rollout">[docs]</a>    <span class="k">def</span> <span class="nf">rollout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run a DMP rollout and reset.</span>
 
 <span class="sd">        Returns</span>
@@ -1429,7 +1429,7 @@
 
         <span class="k">return</span> <span class="n">time_steps</span><span class="p">,</span> <span class="n">p_r</span><span class="p">,</span> <span class="n">q_r</span><span class="p">,</span> <span class="n">p_l</span><span class="p">,</span> <span class="n">q_l</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">forcing</span><span class="p">,</span> <span class="n">s</span></div>
 
-<div class="viewcode-block" id="Bimanual_Target_DMP.info"><a class="viewcode-back" href="../../dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Bimanual_Target_DMP.info"><a class="viewcode-back" href="../../source/dmp_lib.html#dmp_lib.movement_primitives.Bimanual_Target_DMP.info">[docs]</a>    <span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return info about DMP type.</span>
 
 <span class="sd">        Returns</span>

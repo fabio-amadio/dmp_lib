@@ -15,6 +15,6 @@ The repository contains two folders: __dmp_lib__ and __example__.
 
 The __dmp_lib__ folder contains all the modules implementing DMPs.
 
-The __example__ folder contains example scripts (run them from inside __example__).
+The __example__ folder contains example scripts (run them from inside it).
 
-The complete documentation is available at: [https://fabio-amadio.github.io/dmp_lib/](https://fabio-amadio.github.io/dmp_lib/).
+The complete library documentation is available at: [https://fabio-amadio.github.io/dmp_lib/](https://fabio-amadio.github.io/dmp_lib/).

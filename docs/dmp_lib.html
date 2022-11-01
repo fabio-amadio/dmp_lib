@@ -557,7 +557,7 @@ The goal system drives goal variable ‘g’ towards a desired ‘g0’.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="dmp_lib.movement_primitives.Bimanual_DMP">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dmp_lib.movement_primitives.</span></span><span class="sig-name descname"><span class="pre">Bimanual_DMP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.333333333333334</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">312.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'advanced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">1.]])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dmp_lib/movement_primitives.html#Bimanual_DMP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dmp_lib.movement_primitives.Bimanual_DMP" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#dmp_lib.movement_primitives.DMP" title="dmp_lib.movement_primitives.DMP"><code class="xref py py-class docutils literal notranslate"><span class="pre">DMP</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="source/dmp_lib.html#dmp_lib.movement_primitives.DMP" title="dmp_lib.movement_primitives.DMP"><code class="xref py py-class docutils literal notranslate"><span class="pre">DMP</span></code></a></p>
 <p>A class used to implement the Bimanual DMP that controls a virtual
 frame placed between the two end-effectors. Each end-effector pose
 is defined by a fixed rotation and variable translation from the
@@ -568,7 +568,7 @@ central virtual frame. Bimanual_DMP extends the main DMP class.</p>
 <dd><p>canonical system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -579,7 +579,7 @@ central virtual frame. Bimanual_DMP extends the main DMP class.</p>
 <dd><p>goal system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -590,7 +590,7 @@ central virtual frame. Bimanual_DMP extends the main DMP class.</p>
 <dd><p>transformation system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -763,7 +763,7 @@ central virtual frame. Bimanual_DMP extends the main DMP class.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="dmp_lib.movement_primitives.Bimanual_Target_DMP">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dmp_lib.movement_primitives.</span></span><span class="sig-name descname"><span class="pre">Bimanual_Target_DMP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.333333333333334</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">312.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'advanced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_H_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_right</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">1.]])</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R_left</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">1.]])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dmp_lib/movement_primitives.html#Bimanual_Target_DMP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dmp_lib.movement_primitives.Bimanual_Target_DMP" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#dmp_lib.movement_primitives.Target_DMP" title="dmp_lib.movement_primitives.Target_DMP"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target_DMP</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="source/dmp_lib.html#dmp_lib.movement_primitives.Target_DMP" title="dmp_lib.movement_primitives.Target_DMP"><code class="xref py py-class docutils literal notranslate"><span class="pre">Target_DMP</span></code></a></p>
 <p>A class used to implement the Target-Referred (TR) Bimanual DMP
 that controls a virtual frame placed between the two end-effectors.
 Each end-effector pose is defined by a fixed rotation and variable
@@ -776,7 +776,7 @@ Bimanual_Target_DMP extends the Target_DMP class.</p>
 <dd><p>canonical system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -787,7 +787,7 @@ Bimanual_Target_DMP extends the Target_DMP class.</p>
 <dd><p>goal system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -798,7 +798,7 @@ Bimanual_Target_DMP extends the Target_DMP class.</p>
 <dd><p>transformation system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -991,7 +991,7 @@ and transformation system working together.</p>
 <dd><p>canonical system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1002,7 +1002,7 @@ and transformation system working together.</p>
 <dd><p>goal system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1013,7 +1013,7 @@ and transformation system working together.</p>
 <dd><p>transformation system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1353,7 +1353,7 @@ and transformation system working together.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="dmp_lib.movement_primitives.Target_DMP">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dmp_lib.movement_primitives.</span></span><span class="sig-name descname"><span class="pre">Target_DMP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_basis</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8.333333333333334</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_stop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">K</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">312.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">D</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'advanced'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w_H_t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">array([[1.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">1.,</span> <span class="pre">0.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">1.,</span> <span class="pre">0.],</span> <span class="pre">[0.,</span> <span class="pre">0.,</span> <span class="pre">0.,</span> <span class="pre">1.]])</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dmp_lib/movement_primitives.html#Target_DMP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dmp_lib.movement_primitives.Target_DMP" title="Permalink to this definition"></a></dt>
-<dd><p>Bases: <a class="reference internal" href="#dmp_lib.movement_primitives.DMP" title="dmp_lib.movement_primitives.DMP"><code class="xref py py-class docutils literal notranslate"><span class="pre">DMP</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="source/dmp_lib.html#dmp_lib.movement_primitives.DMP" title="dmp_lib.movement_primitives.DMP"><code class="xref py py-class docutils literal notranslate"><span class="pre">DMP</span></code></a></p>
 <p>Target-Referred DMP subclass (extension of DMP).
 A class used to implement the Target-Referred DMP (TR-DMP) that
 learned demo trajectory w.r.t. a target reference frame that can
@@ -1364,7 +1364,7 @@ be changed at execution time.</p>
 <dd><p>canonical system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.canonical.Canonical" title="dmp_lib.canonical.Canonical">dmp_lib.canonical.Canonical</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1375,7 +1375,7 @@ be changed at execution time.</p>
 <dd><p>goal system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.goal.Goal" title="dmp_lib.goal.Goal">dmp_lib.goal.Goal</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1386,7 +1386,7 @@ be changed at execution time.</p>
 <dd><p>transformation system</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><a class="reference internal" href="#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
+<dd class="field-odd"><p><a class="reference internal" href="source/dmp_lib.html#dmp_lib.transformation.Transformation" title="dmp_lib.transformation.Transformation">dmp_lib.transformation.Transformation</a></p>
 </dd>
 </dl>
 </dd></dl>

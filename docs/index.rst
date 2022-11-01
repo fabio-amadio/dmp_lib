@@ -5,6 +5,7 @@
 
 dmp_lib - A Dynamic Movement Primitives Library
 ===============================================
+The **dmp_lib** library offers several *Dynamic Movement Primitive* implementation for robot learning from demonstrations.
 
 .. toctree::
    :maxdepth: 4
