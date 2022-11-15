@@ -1,3 +1,9 @@
+# Copyright 2022 by Fabio Amadio.
+# All rights reserved.
+# This file is part of the dmp_lib,
+# and is released under the "GNU General Public License".
+# Please see the LICENSE file included in the package.
+
 import numpy as np
 import numpy.matlib as matlib
 import matplotlib.pyplot as plt
