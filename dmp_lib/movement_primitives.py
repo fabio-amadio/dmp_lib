@@ -20,6 +20,7 @@ from dmp_lib.geometry import axis_angle_to_quat
 from dmp_lib.geometry import quat_to_axis_angle
 from dmp_lib.geometry import solve_discontinuities
 from dmp_lib.geometry import is_rotation_matrix
+from dmp_lib.rotation_matrix import roto_dilatation
 
 
 class DMP():
@@ -59,16 +60,22 @@ class DMP():
     centers: numpy.ndarray
         basis function centers
 
-    widths: numpy.ndarray
+    widths : numpy.ndarray
         basis function widths
 
-    weights: numpy.ndarray
+    weights : numpy.ndarray
         basis function weights
+
+    rescale : boolean
+        rescale modality (None, 'rotodilation', 'diagonal')
+
+    demo_start_to_goal : numpy.ndarray
+        reference vector for rescaling
     """
 
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2, 
-                 K = 25**2 / 2, D = None, style = 'advanced'):
+                 K = 25**2 / 2, D = None, style = 'advanced', rescale = None):
         """
         Parameters
         ----------
@@ -104,6 +111,9 @@ class DMP():
 
         style: string, optional
             dynamics style (default is 'advanced')
+
+        rescale : boolean
+            rescale modality (None, 'rotodilation', 'diagonal')
         """
         if np.isscalar(x0):
             x0 = np.array([x0])
@@ -128,6 +138,10 @@ class DMP():
 
         # init forcing
         self.init_forcing(num_basis)
+        
+        # for invariant formulation
+        self.rescale = rescale
+        self.demo_start_to_goal = g0 - x0
 
 
     def init_forcing(self, num_basis):
@@ -191,6 +205,47 @@ class DMP():
         else:
             f = np.zeros(self.sys_dim)
         return f
+
+
+    def get_rescaling_matrix(self, g, x0):
+        """Compute rescaling matrix from current g and x0.
+
+        Parameters
+        ----------
+        g : numpy.ndarray
+            goal state
+
+        x0 : numpy.ndarray
+            initial state
+
+        Returns
+        -------
+        S: numpy.ndarray
+            rescaling matrix
+        """
+        I = np.eye(self.sys_dim)
+
+        if self.rescale == 'rotodilation':
+            if self.sys_dim < 3:
+                print("Rotodilation rescaling not possible: sys_dim < 3")
+                return I
+            else:
+                M = roto_dilatation(self.demo_start_to_goal, g - x0)
+                # apply rotodilation scaling only on the position part
+                S = I
+                S[:3,:3] = M[:3,:3]
+                print(S)
+                return S
+
+        elif self.rescale == 'diagonal':     
+            try:
+                scaling = (g - x0) / self.demo_start_to_goal
+                return scaling * I
+            except ZeroDivisionError:
+                return I
+
+        else:
+            return I
 
 
     def evaluate_weighted_basis(self, s):
@@ -299,6 +354,10 @@ class DMP():
         g = self.get_goal()
         f = self.evaluate_forcing(s)
 
+        # rescale forcing
+        S = self.get_rescaling_matrix(g, self.transformation_sys.x0)
+        f = np.matmul(S, f)
+
         self.transformation_sys.step(self.dt, g, s, f)
         self.canonical_sys.step(self.dt, dist=dist)
         self.goal_sys.step(self.dt)
@@ -343,7 +402,7 @@ class DMP():
                 
         num_steps = len(time_steps)
 
-        # modiffy tau
+        # modify tau
         self.set_tau(num_steps*self.dt)
 
         x_demo = path_gen(time_steps).T
@@ -365,6 +424,9 @@ class DMP():
                 ddx_demo[:,i] = np.gradient(dx_demo[:,i], time_steps)
 
         g = x_demo[-1,:]
+        x0 = x_demo[0,:]
+
+        self.demo_start_to_goal = g - x0
 
         # compute phase values
         s_demo = np.zeros(num_steps)
