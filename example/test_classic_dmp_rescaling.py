@@ -38,7 +38,7 @@ mp_none.learn_from_demo(x_demo, time_steps)
 mp_diag.learn_from_demo(x_demo, time_steps)
 mp_roto.learn_from_demo(x_demo, time_steps)
 
-x0 = x0 + [0,0,-400,0,0,0]
+x0 = x0 + [0,0,-1000,0,0,0]
 mp_none.reset(x0)
 mp_diag.reset(x0)
 mp_roto.reset(x0)

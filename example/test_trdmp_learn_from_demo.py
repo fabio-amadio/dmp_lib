@@ -37,7 +37,7 @@ w_H_t[3,3] = 1.0
 
 N = 100
 
-mp = Target_DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, style = 'advanced', w_H_t = w_H_t)
+mp = Target_DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, style = 'advanced', rescale = None, w_H_t = w_H_t)
 mp.learn_from_demo(x_demo, time_steps) # it set x0 and g0 according to w_H_t
 mp.reset(x0+[0,0,-400,0,0,0], in_world_frame = True)
 time_steps, w_p_ee, w_q_ee, x, v, g, forcing, s = mp.rollout()
@@ -56,7 +56,7 @@ y_avg = (y_min + y_max) / 2
 z_avg = (z_min + z_max) / 2
 
 # plot frames
-for k in range(0,x_demo.shape[0], 50):
+for k in range(0,w_p_ee.shape[0], 50):
     R = quat_to_rot(w_q_ee[k,:])
     ax.quiver(w_p_ee[k,0], w_p_ee[k,1], w_p_ee[k,2], R[0,0], R[1,0], R[2,0], colors = 'r', 
                 length = 10, normalize = True)
