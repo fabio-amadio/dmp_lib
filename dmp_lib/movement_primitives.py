@@ -66,7 +66,7 @@ class DMP():
     weights : numpy.ndarray
         basis function weights
 
-    rescale : boolean
+    rescale : string
         rescale modality (None, 'rotodilation', 'diagonal')
 
     demo_start_to_goal : numpy.ndarray
@@ -230,12 +230,7 @@ class DMP():
                 print("Rotodilation rescaling not possible: sys_dim < 3")
                 return I
             else:
-                M = roto_dilatation(self.demo_start_to_goal, g - x0)
-                # apply rotodilation scaling only on the position part
-                S = I
-                S[:3,:3] = M[:3,:3]
-                print(S)
-                return S
+                return roto_dilatation(self.demo_start_to_goal, g - x0)
 
         elif self.rescale == 'diagonal':     
             try:
@@ -786,13 +781,15 @@ class Target_DMP(DMP):
         basis function widths
     weights: numpy.ndarray
         basis function weights
+    rescale: string
+        rescale modality (None, 'rotodilation', 'diagonal')
     w_H_t: numpy.ndarray
         world-to-target homogeneous transformation
     """
 
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2, 
-                 K = 25**2 / 2, D = None, style = 'advanced',
+                 K = 25**2 / 2, D = None, style = 'advanced', rescale = None,
                  w_H_t = np.eye(4)):
         """
         Parameters
@@ -842,7 +839,7 @@ class Target_DMP(DMP):
             raise ValueError('x0 must represent a 6D end-effector pose')
 
         DMP.__init__(self, num_basis, x0, g0, dt, tau,
-            alpha_phase, alpha_stop, alpha_g, K, D, style)
+            alpha_phase, alpha_stop, alpha_g, K, D, style, rescale)
 
         if w_H_t.shape != (4,4):
             if not is_rotation_matrix(w_H_t[:3,:3]):
@@ -853,7 +850,7 @@ class Target_DMP(DMP):
 
         self.w_H_t = w_H_t
 
-    def learn_from_demo(self, x_demo, time_steps, filter_mode = 'cd'):
+    def learn_from_demo(self, x_demo, time_steps, filter_mode = 'savgol'):
         """Fit forcing function to reproduce desired trajectory.
 
            Attributes tau, x0, g0 are modified according to demo.

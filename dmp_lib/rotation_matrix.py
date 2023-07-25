@@ -70,3 +70,4 @@ def roto_dilatation(x0, x1):
     M = np.dot(np.transpose(Mx1), Mx0)
     M *= norm_1 / norm_0
     return M
+    
