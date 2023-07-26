@@ -37,7 +37,7 @@ w_H_t[3,3] = 1.0
 
 N = 100
 
-mp = Target_DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, style = 'advanced', rescale = None, w_H_t = w_H_t)
+mp = Target_DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, style = 'advanced', w_H_t = w_H_t)
 mp.learn_from_demo(x_demo, time_steps) # it resets x0 and g0 according to w_H_t
 time_steps, w_p_ee, w_q_ee, x, v, g, forcing, s = mp.rollout()
 
