@@ -16,7 +16,7 @@ from dmp_lib.geometry import rot_to_axis_angle as rot_to_axis_angle
 from dmp_lib.geometry import quat_to_rot as quat_to_rot
 from dmp_lib.geometry import quat_to_axis_angle as quat_to_axis_angle
 
-demo = np.loadtxt('DATA/demo_rectangle2.csv', delimiter=',')
+demo = np.loadtxt('DATA/single_hand_pick_box.csv', delimiter=',')
 
 time_steps = demo[:,0] # 1st col: time
 time_steps = time_steps - time_steps[0] 
@@ -28,7 +28,7 @@ tau = time_steps[-1]
 x0 = x_demo[0,:]
 g0 = x_demo[-1,:]
 
-w_R_t = axis_angle_to_rot(g0[3:])
+w_R_t = axis_angle_to_rot(g0[3:6])
 
 w_H_t = np.zeros((4,4))
 w_H_t[0:3,0:3] = w_R_t
@@ -38,8 +38,7 @@ w_H_t[3,3] = 1.0
 N = 100
 
 mp = Target_DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, style = 'advanced', rescale = None, w_H_t = w_H_t)
-mp.learn_from_demo(x_demo, time_steps) # it set x0 and g0 according to w_H_t
-mp.reset(x0+[0,0,-400,0,0,0], in_world_frame = True)
+mp.learn_from_demo(x_demo, time_steps) # it resets x0 and g0 according to w_H_t
 time_steps, w_p_ee, w_q_ee, x, v, g, forcing, s = mp.rollout()
 
 fig = plt.figure()
@@ -59,11 +58,11 @@ z_avg = (z_min + z_max) / 2
 for k in range(0,w_p_ee.shape[0], 50):
     R = quat_to_rot(w_q_ee[k,:])
     ax.quiver(w_p_ee[k,0], w_p_ee[k,1], w_p_ee[k,2], R[0,0], R[1,0], R[2,0], colors = 'r', 
-                length = 10, normalize = True)
+                length = 0.05, normalize = True)
     ax.quiver(w_p_ee[k,0], w_p_ee[k,1], w_p_ee[k,2], R[0,1], R[1,1], R[2,1], colors = 'g', 
-                length = 10, normalize = True)
+                length = 0.05, normalize = True)
     ax.quiver(w_p_ee[k,0], w_p_ee[k,1], w_p_ee[k,2], R[0,2], R[1,2], R[2,2], colors = 'b', 
-                length = 10, normalize = True)
+                length = 0.05, normalize = True)
 
 # plot trajectories
 ax.plot3D(w_p_ee[:,0], w_p_ee[:,1], w_p_ee[:,2], 'k', linewidth = 2,  label = 'right pose')

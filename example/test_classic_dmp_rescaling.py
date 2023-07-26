@@ -16,7 +16,7 @@ from dmp_lib.geometry import rot_to_axis_angle as rot_to_axis_angle
 from dmp_lib.geometry import quat_to_rot as quat_to_rot
 from dmp_lib.geometry import quat_to_axis_angle as quat_to_axis_angle
 
-demo = np.loadtxt('DATA/demo_rectangle2.csv', delimiter=',')
+demo = np.loadtxt('DATA/demo_rectangle.csv', delimiter=',')
 
 time_steps = demo[:,0] # 1st col: time
 time_steps = time_steps - time_steps[0] 
@@ -30,7 +30,7 @@ g0 = x_demo[-1,:]
 
 N = 100
 
-mp_none = DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, rescale = None)
+mp_none = DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0)
 mp_diag = DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, rescale = 'diagonal')
 mp_roto = DMP(num_basis = N, tau = tau, dt = dt, x0 = x0, g0 = g0, rescale = 'rotodilation')
 
@@ -38,7 +38,8 @@ mp_none.learn_from_demo(x_demo, time_steps)
 mp_diag.learn_from_demo(x_demo, time_steps)
 mp_roto.learn_from_demo(x_demo, time_steps)
 
-x0 = x0 + [0,0,-1000,0,0,0]
+# Change initial state
+x0 = x0 + [0,0,-0.4,0,0,0]
 mp_none.reset(x0)
 mp_diag.reset(x0)
 mp_roto.reset(x0)
