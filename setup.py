@@ -4,7 +4,7 @@ package_name = 'dmp_lib'
 
 setup(
     name=package_name,
-    version='1.0',
+    version='1.1',
     packages=[package_name],
     data_files=[],
     install_requires=['numpy', 'matplotlib', 'scikit-learn'],

@@ -67,7 +67,7 @@ class DMP():
         basis function weights
 
     rescale : string
-        rescale modality (None, 'rotodilation', 'diagonal')
+        rescale modality ('', 'rotodilation', 'diagonal')
 
     demo_start_to_goal : numpy.ndarray
         reference vector for rescaling
@@ -75,7 +75,7 @@ class DMP():
 
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2, 
-                 K = 25**2 / 2, D = None, style = 'advanced', rescale = None):
+                 K = 25**2 / 2, D = None, style = 'advanced', rescale = ''):
         """
         Parameters
         ----------
@@ -112,8 +112,8 @@ class DMP():
         style: string, optional
             dynamics style (default is 'advanced')
 
-        rescale : boolean
-            rescale modality (None, 'rotodilation', 'diagonal')
+        rescale : string
+            rescale modality ('', 'rotodilation', 'diagonal')
         """
         if np.isscalar(x0):
             x0 = np.array([x0])
@@ -464,6 +464,8 @@ class DMP():
             fitted_w = np.dot(np.linalg.pinv(Phi), f_d)
             self.weights[:,j] = fitted_w[:,0]
 
+        self.reset(x_demo[0,:])
+        self.set_new_goal(x_demo[-1,:])
 
         return x_demo, dx_demo, ddx_demo, time_steps
 
@@ -577,6 +579,9 @@ class Bimanual_DMP(DMP):
     weights: numpy.ndarray
         basis function weights
 
+    rescale : string
+        rescale modality ('', 'rotodilation', 'diagonal')
+
     R_right : numpy.ndarray
         right EE rotation matrix [R_right.shape = (3,3)]
 
@@ -586,7 +591,7 @@ class Bimanual_DMP(DMP):
 
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2,
-                 K = 25**2 / 2, D = None, style = 'advanced',
+                 K = 25**2 / 2, D = None, style = 'advanced', rescale = '',
                  R_right = np.eye(3), R_left = np.eye(3)):
         """
         Parameters
@@ -624,6 +629,9 @@ class Bimanual_DMP(DMP):
         style: string, optional
             dynamics style (default is 'advanced')
 
+        rescale : string
+            rescale modality ('', 'rotodilation', 'diagonal')
+
         R_right: numpy.ndarray, optional
             right EE rotation matrix (default is np.eye(3))
 
@@ -648,7 +656,7 @@ class Bimanual_DMP(DMP):
             raise ValueError('R_left is not a rotation matrix')
 
         DMP.__init__(self,num_basis, x0, g0, dt, tau,
-            alpha_phase, alpha_stop, alpha_g, K, D, style)
+            alpha_phase, alpha_stop, alpha_g, K, D, style, rescale)
 
         self.R_right = R_right
         self.R_left = R_left
@@ -759,37 +767,53 @@ class Target_DMP(DMP):
     ----------
     canonical_sys : dmp_lib.canonical.Canonical
         canonical system
+
     goal_sys : dmp_lib.goal.Goal
         goal system
+
     transformation_sys : dmp_lib.transformation.Transformation
         transformation system
+
     z : numpy.ndarray
         scaled velocity variable
+
     x0 : numpy.ndarray
         initial state
+
     sys_dim: int
         system dimension
+
     tau : float
         time scaling parameter
+
     dt : float
         sampling interval
+
     num_basis : int
         number of basis functions
+
     centers: numpy.ndarray
         basis function centers
+
     widths: numpy.ndarray
         basis function widths
+
     weights: numpy.ndarray
         basis function weights
+
+    ref_axis : numpy.ndarray, optional
+        reference axis for axis-angle alignment (default is np.array([0,0,1]))
+
     rescale: string
-        rescale modality (None, 'rotodilation', 'diagonal')
+        rescale modality ('', 'rotodilation', 'diagonal')
+
     w_H_t: numpy.ndarray
         world-to-target homogeneous transformation
     """
 
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2, 
-                 K = 25**2 / 2, D = None, style = 'advanced', rescale = None,
+                 K = 25**2 / 2, D = None, style = 'advanced', rescale = '',
                  w_H_t = np.eye(4)):
         """
         Parameters
@@ -827,6 +851,9 @@ class Target_DMP(DMP):
         style: string, optional
             dynamics style (default is 'advanced')
 
+        rescale: string
+            rescale modality ('', 'rotodilation', 'diagonal')
+
         w_H_t: numpy.ndarray, optional
             world-to-target hom. transformation (default is np.eye(4))
 
@@ -847,6 +874,9 @@ class Target_DMP(DMP):
                     and w_H_t[3,3] == 1): 
                     raise ValueError('w_H_t is not a proper \
                         homogeneous transformation matrix')
+
+        axis, angle = rot_to_axis_angle(w_H_t[:3,:3])
+        self.ref_axis = axis * angle
 
         self.w_H_t = w_H_t
 
@@ -910,7 +940,10 @@ class Target_DMP(DMP):
             # target-to-end-effector
             t_H_ee = np.matmul(np.linalg.inv(self.w_H_t), w_H_ee)
             t_R_ee = t_H_ee[0:3,0:3]
-            axis, angle = rot_to_axis_angle(t_R_ee, auto_align = True) 
+            axis, angle = rot_to_axis_angle(t_R_ee, auto_align = True, ref_axis = self.ref_axis) 
+            # update ref_axis with first demo axis
+            if k == 0:
+                self.ref_axis = axis
             axis_list.append(axis)
             angle_list.append(angle)
             t_axis_angle_ee = axis * angle
@@ -1027,7 +1060,7 @@ class Target_DMP(DMP):
         w_q_ee = np.array(rot_to_quat(w_R_ee))
 
         ## get orientation (as axis-angle)
-        # axis, angle = rot_to_axis_angle(w_R_ee, auto_align = True)
+        # axis, angle = rot_to_axis_angle(w_R_ee, auto_align = True, ref_axis = self.ref_axis)
         # w_aa_ee = axis * angle
 
         return w_p_ee, w_q_ee
@@ -1115,7 +1148,7 @@ class Target_DMP(DMP):
             # target-to-x0
             t_H_x0 = np.matmul(np.linalg.inv(self.w_H_t), w_H_x0)
             t_R_x0 = t_H_x0[0:3,0:3]
-            axis, angle = rot_to_axis_angle(t_R_x0, auto_align = True) 
+            axis, angle = rot_to_axis_angle(t_R_x0, auto_align = True, ref_axis = self.ref_axis) 
             t_axis_angle_x0 = axis*angle
             t_position_x0 = t_H_x0[0:3,3]
             x0_in_ref = np.copy(x0)
@@ -1162,7 +1195,7 @@ class Target_DMP(DMP):
             # target-to-goal
             t_H_g = np.matmul(np.linalg.inv(self.w_H_t), w_H_g)
             t_R_g = t_H_g[0:3,0:3]
-            axis, angle = rot_to_axis_angle(t_R_g, auto_align = True) 
+            axis, angle = rot_to_axis_angle(t_R_g, auto_align = True, ref_axis = self.ref_axis) 
             t_axis_angle_g = axis*angle
             t_position_g = t_H_g[0:3,3]
             g_in_ref = np.copy(new_g)
@@ -1201,7 +1234,7 @@ class Target_DMP(DMP):
             # world-to-goal
             w_H_g = np.matmul(self.w_H_t, t_H_g)
             w_R_g = w_H_g[0:3,0:3]
-            axis, angle = rot_to_axis_angle(w_R_g, auto_align = True) 
+            axis, angle = rot_to_axis_angle(w_R_g, auto_align = True, ref_axis = self.ref_axis) 
             w_axis_angle_g = axis*angle
             w_position_g = w_H_g[0:3,3]
             g_in_world = np.copy(g_in_ref)
@@ -1261,6 +1294,12 @@ class Bimanual_Target_DMP(Target_DMP):
     weights: numpy.ndarray
         basis function weights
 
+    ref_axis : numpy.ndarray, optional
+        reference axis for axis-angle alignment (default is np.array([0,0,1]))
+
+    rescale: string
+        rescale modality ('', 'rotodilation', 'diagonal')
+
     w_H_t : numpy.ndarray
         new world-to-target hom. tr. [w_H_t.shape = (4,4)]
 
@@ -1272,7 +1311,7 @@ class Bimanual_Target_DMP(Target_DMP):
     """
     def __init__(self, num_basis, x0, g0, dt, tau,
                  alpha_phase = 25 / 3, alpha_stop = 25, alpha_g = 25 / 2,
-                 K = 25**2 / 2, D = None, style = 'advanced',
+                 K = 25**2 / 2, D = None, style = 'advanced', rescale = '',
                  w_H_t = np.eye(4), R_right = np.eye(3), R_left = np.eye(3)):
         """
         Parameters
@@ -1310,6 +1349,9 @@ class Bimanual_Target_DMP(Target_DMP):
         style: string, optional
             dynamics style (default is 'advanced')
 
+        rescale: string
+            rescale modality ('', 'rotodilation', 'diagonal')
+
         w_H_t: numpy.ndarray, optional
             world-to-target hom. transformation (default is np.eye(4))
 
@@ -1337,7 +1379,7 @@ class Bimanual_Target_DMP(Target_DMP):
             raise ValueError('R_left is not a rotation matrix')
 
         Target_DMP.__init__(self,num_basis, x0, g0, dt, tau,
-            alpha_phase, alpha_stop, alpha_g, K, D, style, w_H_t)
+            alpha_phase, alpha_stop, alpha_g, K, D, style, rescale, w_H_t)
 
         self.R_right = R_right
         self.R_left = R_left
